@@ -1,36 +1,129 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio 2025
+
+A modern, responsive portfolio website built with Next.js 15, TypeScript, and Tailwind CSS v4.
+
+## Features
+
+- 🚀 **Next.js 15** with App Router
+- 💎 **TypeScript** for type safety
+- 🎨 **Tailwind CSS v4** for styling
+- 📱 **Responsive Design** for all devices
+- ⚡ **Fast Performance** with optimized builds
+- 🎯 **SEO Optimized** with proper metadata
+
+## Project Structure
+
+```
+portfolio-2025/
+├── src/
+│   ├── app/                    # App Router pages
+│   │   ├── about/             # About page
+│   │   ├── contact/           # Contact page
+│   │   ├── projects/          # Projects page
+│   │   ├── globals.css        # Global styles
+│   │   ├── layout.tsx         # Root layout
+│   │   └── page.tsx           # Home page
+│   └── components/            # Reusable components
+│       ├── Header.tsx         # Navigation header
+│       └── Footer.tsx         # Site footer
+├── public/                    # Static assets
+├── package.json
+├── tailwind.config.js
+├── tsconfig.json
+└── README.md
+```
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone <your-repo-url>
+cd portfolio-2025
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Available Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
 
-## Learn More
+## Customization
 
-To learn more about Next.js, take a look at the following resources:
+### Updating Content
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Homepage**: Edit `src/app/page.tsx`
+2. **About Page**: Edit `src/app/about/page.tsx`
+3. **Projects**: Edit `src/app/projects/page.tsx`
+4. **Contact**: Edit `src/app/contact/page.tsx`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Styling
 
-## Deploy on Vercel
+The project uses Tailwind CSS v4 with custom CSS variables defined in `src/app/globals.css`. You can customize:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Colors in the `:root` section
+- Fonts in the layout
+- Component styles using Tailwind classes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Adding New Pages
+
+1. Create a new folder in `src/app/`
+2. Add a `page.tsx` file
+3. Update navigation in `src/components/Header.tsx`
+
+## Deployment
+
+The project is ready for deployment on platforms like:
+
+- **Vercel** (recommended for Next.js)
+- **Netlify**
+- **AWS Amplify**
+- **Railway**
+
+### Vercel Deployment
+
+1. Push your code to GitHub
+2. Connect your repository to Vercel
+3. Deploy with zero configuration
+
+## Technologies Used
+
+- **Next.js 15** - React framework
+- **TypeScript** - Type safety
+- **Tailwind CSS v4** - Utility-first CSS
+- **React 19** - UI library
+- **ESLint** - Code linting
+
+## License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+## Contributing
+
+Feel free to submit issues and enhancement requests!
+
+---
+
+Built with ❤️ using Next.js and Tailwind CSS
