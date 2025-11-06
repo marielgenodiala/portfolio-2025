@@ -41,3 +41,15 @@ export const fadeIn = keyframes`
     opacity: 1;
   }
 `;
+
+export const wave = keyframes`
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(20deg);
+  }
+  75% {
+    transform: rotate(-20deg);
+  }
+`;
