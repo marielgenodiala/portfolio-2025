@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
 import FloatingElements from "@/components/FloatingElements";
-import { Poppins, Inter, Montserrat } from "next/font/google";
+import { Poppins } from "next/font/google";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://marielgenodiala.com";
 

@@ -31,7 +31,7 @@ export default function SkillsSection() {
   ];
 
   const getSkillName = (logoName: string) => {
-    let name = logoName.replace(".png", "");
+    const name = logoName.replace(".png", "");
     
     // Handle specific cases that shouldn't have spaces
     const specialCases: { [key: string]: string } = {

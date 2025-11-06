@@ -30,7 +30,7 @@ export default function HomeSection() {
                   </span>
                 ))}
               </span>
-              <span className="text-paynes-gray"> I'm Mariel</span>
+              <span className="text-paynes-gray"> I&apos;m Mariel</span>
             </Heading>
             <Heading
               type="h2"

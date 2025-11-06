@@ -97,7 +97,7 @@ export default function TestimonialsSection() {
 
         {/* Responsive testimonial cards: 1 mobile, 2 md, 3 lg+ */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-16 px-4 2xl:px-0 max-w-7xl mx-auto">
-          {visibleTestimonials.map((testimonial, index) => (
+          {visibleTestimonials.map((testimonial) => (
             <div key={testimonial.name} className="text-center flex flex-col h-full">
               {/* Quote icon */}
               <div className="mb-6 flex justify-center">

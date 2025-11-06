@@ -33,7 +33,7 @@ export default function Contact() {
             Get In Touch
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Ready to start your next project? Let's discuss how we can work
+            Ready to start your next project? Let&apos;s discuss how we can work
             together to bring your ideas to life.
           </p>
         </div>
@@ -130,12 +130,12 @@ export default function Contact() {
           <div className="space-y-8">
             <div>
               <h2 className="text-2xl font-bold text-white mb-6">
-                Let's connect
+                Let&apos;s connect
               </h2>
               <p className="text-lg text-gray-300 mb-8">
-                I'm always interested in hearing about new opportunities and
+                I&apos;m always interested in hearing about new opportunities and
                 exciting projects. Whether you have a question or just want to
-                say hi, I'll try my best to get back to you!
+                say hi, I&apos;ll try my best to get back to you!
               </p>
             </div>
 

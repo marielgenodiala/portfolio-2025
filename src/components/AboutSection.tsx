@@ -8,7 +8,6 @@ import { useState } from "react";
 import { IoLogoFacebook } from "react-icons/io5";
 import { AiFillInstagram } from "react-icons/ai";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
-import { scrollToSection } from "@/utils/scrollUtils";
 
 
 interface WorkExperience {
@@ -200,14 +199,14 @@ export default function AboutSection() {
 
               <div className="max-w-sm md:max-w-md lg:max-w-xl mx-auto md:mx-0">
                 <p className="text-sm md:text-md  xl:text-lg text-white mb-4 md:mb-6 font-text text-left">
-                  I'm a full-stack web developer with almost 3 years of experience crafting
+                  I&apos;m a full-stack web developer with almost 3 years of experience crafting
                   websites and web apps using Next.js, React, JavaScript, Java,
                   WordPress, and modern design tools. I handle both design and
                   development — turning ideas into polished digital experiences.
                 </p>
                 <p className="text-sm md:text-md  xl:text-lg text-white mb-6 md:mb-8 font-text text-left">
-                  I'm also part of the public organization JavascriptCebu and actively
-                  volunteer at tech events. When I'm not coding, you'll find me exploring
+                  I&apos;m also part of the public organization JavascriptCebu and actively
+                  volunteer at tech events. When I&apos;m not coding, you&apos;ll find me exploring
                   new adventures, playing badminton, or capturing moments through photography.
                 </p>
                 <p className="text-sm md:text-md  xl:text-lg text-white mb-6 md:mb-8 font-bold text-left">

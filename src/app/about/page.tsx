@@ -17,7 +17,7 @@ export default function About() {
           <div>
             <h2 className="text-3xl font-bold text-white mb-6">My Story</h2>
             <p className="text-lg text-gray-300 mb-6">
-              I'm a passionate developer with a love for creating beautiful,
+              I&apos;m a passionate developer with a love for creating beautiful,
               functional, and user-friendly applications. My journey in web
               development began with curiosity and has evolved into a career
               focused on delivering exceptional digital experiences.
@@ -29,9 +29,9 @@ export default function About() {
               meaningful connections.
             </p>
             <p className="text-lg text-gray-300">
-              When I'm not coding, you can find me exploring new technologies,
+              When I&apos;m not coding, you can find me exploring new technologies,
               contributing to open source projects, or sharing knowledge with
-              the developer community. I'm always eager to learn and grow in
+              the developer community. I&apos;m always eager to learn and grow in
               this ever-evolving field.
             </p>
           </div>
