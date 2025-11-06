@@ -18,28 +18,37 @@ const Heading: React.FC<HeadingProps> = ({
   const variantClasses = {
     default: "font-heading",
     hero: "text-8xl md:text-9xl lg:text-[12rem] leading-none font-heading",
-    section: "text-4xl md:text-5xl lg:text-6xl font-poppins",
+    section: "font-poppins",
     subtitle: "text-2xl md:text-3xl lg:text-4xl font-heading",
     card: "text-xl md:text-2xl   font-heading",
   };
 
   const typeClasses = {
     h1: "text-6xl md:text-7xl lg:text-8xl",
-    h2: "text-4xl md:text-5xl lg:text-[60px] ",
-    h3: "text-3xl md:text-4xl lg:text-5xl",
+    h2: "text-[50px] md:text-[60px] lg:text-[70px] xl:text-[80px]",
+    h3: "text-xl md:text-2xl lg:text-3xl",
     h4: "text-2xl md:text-3xl lg:text-4xl",
     h5: "text-xl md:text-2xl lg:text-3xl",
     h6: "text-lg md:text-xl lg:text-2xl",
   };
 
-  const combinedClasses = `
-    ${baseClasses}
-    ${variantClasses[variant]}
-    ${typeClasses[type]}
-    ${className}
-  `.trim();
+  // Merge classes properly - order matters for overrides
+  // 1. Base classes (font-bold)
+  // 2. Type classes (responsive text sizes from h1-h6)
+  // 3. Variant classes (additional styles like font families)
+  // 4. Custom className (allows overrides at any breakpoint)
+  const combinedClasses = [
+    baseClasses,
+    typeClasses[type],
+    variantClasses[variant],
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .replace(/\s+/g, " ")
+    .trim();
 
-  const Tag = type as keyof JSX.IntrinsicElements;
+  const Tag = type as "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 
   return <Tag className={combinedClasses}>{children}</Tag>;
 };

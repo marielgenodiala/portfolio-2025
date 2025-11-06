@@ -78,7 +78,7 @@ export default function Header() {
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 bg-rich-black/90 backdrop-blur-md">
-        <div className="mx-auto px-12">
+        <div className="mx-auto px-4 lg:px-12">
           <div className="flex items-center justify-between h-28">
             {/* Logo - Left Side */}
             <div className="flex items-center py-4">

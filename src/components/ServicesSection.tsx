@@ -42,11 +42,11 @@ export default function ServicesSection() {
   return (
     <section
       id="services"
-      className="min-h-screen flex items-center justify-center px-4 py-20 snap-section mt-28"
+      className="min-h-screen flex justify-center items-center px-4 py-20 snap-section pt-28 pb-12 md:pb-20"
     >
       <div className="mx-auto px-12 max-w-7xl">
         <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>
-          <div className="text-center mb-16">
+          <div className="text-center md:mb-16  mb-8">
             <Heading
               type="h2"
               variant="section"

@@ -76,7 +76,7 @@ export default function SkillsSection() {
   return (
     <section
       id="skills"
-      className="min-h-screen flex items-center justify-center px-4  snap-section mt-28"
+      className="min-h-screen flex justify-center items-center px-4 snap-section pt-28 pb-12 md:pb-20"
       >
         <div className="mx-auto px-12 max-w-7xl">
         <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>

@@ -50,7 +50,7 @@ export default function AboutSection() {
       period: "Jan 2025 - Present",
       description: [
         "Develop web applications using React and Java for diverse client needs",
-        "Provide online tutoring and programming training sessions",
+        // "Provide online tutoring and programming training sessions",
         "Offer IT consulting services for various technology projects",
         "Create and maintain WordPress websites and custom solutions"
       ]
@@ -145,20 +145,19 @@ export default function AboutSection() {
     <>
       <section
         id="about-me"
-        className="min-h-screen flex items-center justify-center px-4 py-20 snap-section mt-28"
+        className="min-h-screen flex justify-center items-center px-4 xl:py-20 snap-section pt-44 pb-12 md:pt-40 md:pb-20"
       >
-        <div className="mx-auto px-12 max-w-7xl grid lg:grid-cols-2 gap-12 items-center">
+        <div className="mx-auto px-4 md:px-12  max-w-[330px] md:max-w-7xl grid lg:grid-cols-2 gap-8 md:gap-12 items-center w-full">
           <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>
-            <div className="flex justify-center">
-              <div className="relative w-[400px] h-[500px]">
-                {/* Border frame 1 - upper right corner (behind) */}
-                <div className="absolute top-5 right-5 w-full h-full border-[3px] border-van-dyke rounded-sm pointer-events-none z-0"></div>
+            <div className="flex justify-center  ">
+              <div className="relative w-[250px] h-[300px] md:w-[300px] md:h-[375px] lg:w-[350px] lg:h-[437px] xl:w-[400px] xl:h-[500px]">
+              
+                <div className="absolute top-3 right-3 md:top-4 md:right-4 xl:top-5 xl:right-5 w-full h-full border-[2px] md:border-[3px] border-van-dyke rounded-sm pointer-events-none z-0"></div>
 
-                {/* Border frame 2 - lower left corner (behind) */}
-                <div className="absolute bottom-5 left-5 w-full h-full border-[3px] border-dim-gray rounded-sm pointer-events-none z-0"></div>
+                <div className="absolute bottom-3 left-3 md:bottom-4 md:left-4 xl:bottom-5 xl:left-5 w-full h-full border-[2px] md:border-[3px] border-dim-gray rounded-sm pointer-events-none z-0"></div>
 
-                {/* Main image - on top overlapping both borders */}
-                <div className="absolute inset-2 overflow-hidden rounded-sm z-10">
+   
+                <div className="absolute  inset-1 md:inset-1.5  xl:inset-2 overflow-hidden rounded-sm z-10">
                   <Image
                     src="/images/About Me Image.png"
                     alt="About Me Image"
@@ -170,17 +169,17 @@ export default function AboutSection() {
             </div>
           </Reveal>
           <Reveal keyframes={fadeInUp} duration={2000} triggerOnce delay={200}>
-            <div>
+            <div className="md:ml-20 lg:ml-0">
               <Heading
                 type="h2"
                 variant="section"
-                className="text-white mb-6 lg:text-[60px] font-poppins "
+                className="text-white mb-6 text-[32px] md:text-[42px] lg:text-[50px] xl:text-[60px] font-poppins text-left "
               >
                 About Me
               </Heading>
               
               {/* Social Media Links */}
-              <div className="flex gap-2 mb-8 justify-center sm:justify-start">
+              <div className="flex gap-2 mb-6 md:mb-8 justify-start">
                 <a 
                   href="https://www.facebook.com/mariel.genodiala.2024/" 
                   target="_blank" 
@@ -199,29 +198,31 @@ export default function AboutSection() {
                 </a>
               </div>
 
-              <div className="max-w-xl mx-auto">
-                <p className="text-md lg:text-lg text-white mb-6 font-text">
+              <div className="max-w-sm md:max-w-md lg:max-w-xl mx-auto md:mx-0">
+                <p className="text-sm md:text-md  xl:text-lg text-white mb-4 md:mb-6 font-text text-left">
                   I'm a full-stack web developer with almost 3 years of experience crafting
                   websites and web apps using Next.js, React, JavaScript, Java,
                   WordPress, and modern design tools. I handle both design and
                   development — turning ideas into polished digital experiences.
                 </p>
-                <p className="text-md lg:text-lg text-white mb-8 font-text">
+                <p className="text-sm md:text-md  xl:text-lg text-white mb-6 md:mb-8 font-text text-left">
                   I'm also part of the public organization JavascriptCebu and actively
                   volunteer at tech events. When I'm not coding, you'll find me exploring
                   new adventures, playing badminton, or capturing moments through photography.
                 </p>
-                <p className="text-md lg:text-lg text-white mb-8 font-bold">
+                <p className="text-sm md:text-md  xl:text-lg text-white mb-6 md:mb-8 font-bold text-left">
                   Build. Have Fun. Repeat.
                 </p>
               </div>
 
-              <button 
-                onClick={openModal}
-                className="rounded-full bg-gunmetal text-white py-3 px-8 font-button hover:bg-dim-gray transition-colors"
-              >
-                Learn More About Me
-              </button>
+              <div className="flex justify-start">
+                <button 
+                  onClick={openModal}
+                  className="rounded-full bg-gunmetal text-white py-2 md:py-3 px-6 md:px-8 text-sm md:text-base font-button hover:bg-dim-gray transition-colors"
+                >
+                  Learn More About Me
+                </button>
+              </div>
             </div>
           </Reveal>
         </div>

@@ -6,6 +6,7 @@ export default {
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/ui/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
@@ -22,6 +23,13 @@ export default {
         text: ["var(--font-poppins)", ...defaultTheme.fontFamily.sans],
         poppins: ["var(--font-poppins)", ...defaultTheme.fontFamily.sans],
         body: ["var(--font-poppins)", ...defaultTheme.fontFamily.sans],
+      },
+      screens: {
+        'sm': '640px',
+        'md': '768px',
+        'lg': '1024px',
+        'xl': '1280px',
+        '2xl': '1400px',
       },
     },
   },

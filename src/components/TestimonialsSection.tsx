@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Heading } from "@/ui";
 import { BiSolidQuoteRight } from "react-icons/bi";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
@@ -9,6 +9,32 @@ import { fadeInUp } from "@/components/common/animations";
 
 export default function TestimonialsSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [itemsToShow, setItemsToShow] = useState(3); // Default to 3 for lg+
+
+  // Handle responsive items to show
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        // lg and above: 3 items
+        setItemsToShow(3);
+      } else if (window.innerWidth >= 768) {
+        // md: 2 items
+        setItemsToShow(2);
+      } else {
+        // mobile: 1 item
+        setItemsToShow(1);
+      }
+    };
+
+    // Set initial value
+    handleResize();
+
+    // Add event listener
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const testimonials = [
     {
@@ -50,42 +76,41 @@ export default function TestimonialsSection() {
     );
   };
 
-  const visibleTestimonials = [
-    testimonials[currentIndex],
-    testimonials[(currentIndex + 1) % testimonials.length],
-    testimonials[(currentIndex + 2) % testimonials.length],
-  ];
+  // Get visible testimonials based on itemsToShow
+  const visibleTestimonials = Array.from({ length: itemsToShow }, (_, i) => 
+    testimonials[(currentIndex + i) % testimonials.length]
+  );
 
   return (
     <section
       id="testimonials"
-      className="min-h-screen flex items-center justify-center px-4 py-20 snap-section mt-28"
+      className="min-h-screen flex justify-center items-center px-4 py-20 snap-section pt-28 pb-12 md:pb-20"
     >
-      <div className="mx-auto px-12 max-w-7xl">
+      <div className="mx-auto md:px-12 max-w-7xl">
         <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>
-          <div className="text-center mb-16">
+          <div className="text-center px-4 md:px-0 mb-8 md:mb-16">
             <Heading type="h2" variant="section" className="text-white mb-6">
               Feedback & Experiences
             </Heading>
           </div>
         </Reveal>
 
-        {/* Three testimonial cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16 max-w-7xl mx-auto">
+        {/* Responsive testimonial cards: 1 mobile, 2 md, 3 lg+ */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-16 px-4 2xl:px-0 max-w-7xl mx-auto">
           {visibleTestimonials.map((testimonial, index) => (
-            <Reveal keyframes={fadeInUp} duration={2000} triggerOnce key={index} delay={index * 200}>
-              <div className="text-center">
-                {/* Quote icon */}
-                <div className="mb-6 flex justify-center">
-                  <BiSolidQuoteRight className="text-dim-gray text-5xl" />
-                </div>
+            <div key={testimonial.name} className="text-center flex flex-col h-full">
+              {/* Quote icon */}
+              <div className="mb-6 flex justify-center">
+                <BiSolidQuoteRight className="text-dim-gray text-5xl" />
+              </div>
 
-                {/* Testimonial text */}
-                <p className="text-white font-text text-base mb-8 leading-relaxed">
-                  {testimonial.content}
-                </p>
+              {/* Testimonial text */}
+              <p className="text-white font-text text-base mb-8 leading-relaxed flex-grow">
+                {testimonial.content}
+              </p>
 
-                {/* Name */}
+              {/* Name and Role - pushed to bottom on md and above */}
+              <div className="md:mt-auto">
                 <Heading
                   type="h4"
                   variant="card"
@@ -99,13 +124,44 @@ export default function TestimonialsSection() {
                   {testimonial.role}
                 </p>
               </div>
-            </Reveal>
+            </div>
           ))}
         </div>
 
         {/* Pagination and Navigation */}
         <Reveal keyframes={fadeInUp} duration={2000} triggerOnce delay={600}>
-          <div className="flex items-center justify-between max-w-7xl mx-auto">
+          {/* Mobile: Centered below testimonials */}
+          <div className="md:hidden flex flex-col items-center justify-center mt-8 space-y-4">
+            {/* Pagination indicator - single line (centered) */}
+            <div className="relative w-32 h-1 bg-white/50">
+              <div
+                className="absolute top-0 h-full bg-white transition-all duration-300"
+                style={{
+                  left: 0,
+                  width: `${((currentIndex + 1) / testimonials.length) * 100}%`,
+                }}
+              />
+            </div>
+
+            {/* Navigation arrows (centered) */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handlePrev}
+                className="text-white hover:text-dim-gray transition-colors"
+              >
+                <MdNavigateBefore className="text-3xl" />
+              </button>
+              <button
+                onClick={handleNext}
+                className="text-white hover:text-dim-gray transition-colors"
+              >
+                <MdNavigateNext className="text-3xl" />
+              </button>
+            </div>
+          </div>
+
+          {/* MD and above: Original layout with pagination in center and buttons on right */}
+          <div className="hidden md:flex items-center justify-between max-w-7xl mx-auto">
             {/* Empty space for alignment */}
             <div className="w-24"></div>
 
@@ -121,7 +177,7 @@ export default function TestimonialsSection() {
             </div>
 
             {/* Navigation arrows (right side) */}
-            <div className="flex items-center ">
+            <div className="flex items-center">
               <button
                 onClick={handlePrev}
                 className="text-white hover:text-dim-gray transition-colors"

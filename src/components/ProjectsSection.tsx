@@ -127,9 +127,9 @@ export default function ProjectsSection() {
   return (
     <section
       id="projects"
-      className="min-h-screen flex items-center justify-center px-4 py-20 snap-section mt-28"
+      className="min-h-screen flex justify-center items-center px-4 py-20 snap-section pt-28 pb-12 md:pb-20"
     >
-      <div className="mx-auto px-12 max-w-7xl">
+      <div className="mx-auto px-12 max-w-[400px] md:max-w-[800px] lg:max-w-6xl xl:max-w-7xl">
         <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>
           <div className="text-center mb-16">
             <Heading type="h2" variant="section" className="text-white mb-6">
@@ -143,7 +143,7 @@ export default function ProjectsSection() {
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`w-44 py-3 rounded-full font-text text-sm transition-colors ${
+                    className={`w-28 md:w-36 lg:w-44 py-2 md:py-2.5 lg:py-3 rounded-full font-text text-xs md:text-xs lg:text-sm transition-colors ${
                       activeTab === tab
                         ? "bg-dim-gray text-black"
                         : "bg-white text-black"
@@ -157,11 +157,11 @@ export default function ProjectsSection() {
           </div>
         </Reveal>
         
-        {/* Tab Content Container with Fixed Height */}
-        <div className="h-[450px] flex items-center justify-center">
+        {/* Tab Content Container */}
+        <div className="flex justify-center min-h-[450px] items-center">
           {/* Conditional Content Based on Active Tab */}
           {activeTab === "Team Projects" && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto w-full">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-3xl xl:max-w-4xl mx-auto w-full ">
               {projects.map((project, index) => (
                 <Reveal keyframes={fadeInUp} duration={2000} triggerOnce key={index} delay={index * 200}>
                   <div
@@ -210,10 +210,10 @@ export default function ProjectsSection() {
           )}
 
           {activeTab === "Work" && (
-            <div className="max-w-4xl mx-auto w-full h-full overflow-y-auto">
+            <div className="max-w-4xl mx-auto w-full">
               <div className="relative py-8">
                 {/* Timeline line */}
-                <div className="absolute left-8 top-8 bottom-8 w-0.5 bg-gray-400"></div>
+                <div className="absolute left-4 md:left-8 top-8 bottom-8 w-0.5 bg-gray-400"></div>
                 
                 {/* Timeline items */}
                 <div className="space-y-10">
@@ -221,7 +221,7 @@ export default function ProjectsSection() {
                     <Reveal keyframes={fadeInUp} duration={2000} triggerOnce key={index} delay={index * 200}>
                       <div className="relative flex flex-col items-start">
                         {/* Timeline marker */}
-                        <div className="absolute left-6 w-5 h-5 bg-gray-400 rounded-full border-4 border-gray-900"></div>
+                        <div className="absolute left-2 md:left-6 w-5 h-5 bg-gray-400 rounded-full border-4 border-gray-900"></div>
                         
                         {/* Image */}
                         <div className="ml-16 mb-3">

@@ -20,9 +20,9 @@ export default function FloatingElements() {
 
   return (
     <div className="fixed inset-0 pointer-events-none z-40">
-      <div className="mx-auto px-12 h-full relative">
-        {/* Floating Social Icons - Left Side */}
-        <div className="absolute left-8 bottom-8 flex flex-col space-y-6 pointer-events-auto">
+      <div className="mx-auto px-4 lg:px-12 h-full relative">
+        
+        <div className="absolute left-4 lg:left-8 bottom-8 flex flex-col space-y-6 pointer-events-auto">
           <a
             href="mailto:marielgenodiala.work@gmail.com"
             className="text-white hover:text-dim-gray transition-colors"
@@ -64,7 +64,7 @@ export default function FloatingElements() {
         </div>
 
         {/* Page Counter - Right Side */}
-        <div className="absolute right-8 bottom-8 flex flex-col items-center pointer-events-auto ">
+        <div className="absolute right-4 lg:right-8 bottom-8 flex flex-col items-center pointer-events-auto ">
           <div className="text-white/20 text-lg md:text-xl font-medium transform -rotate-90">
             {displayTotal}
           </div>

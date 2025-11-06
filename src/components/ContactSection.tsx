@@ -43,26 +43,29 @@ export default function ContactSection() {
   return (
     <section
       id="contact"
-      className="min-h-screen flex items-center justify-center px-4 py-20 snap-section mt-28"
+      className="min-h-screen flex justify-center items-center px-4 py-20 snap-section pt-28 pb-12 md:pb-20"
     >
-      <div className="mx-auto px-12 max-w-7xl w-full">
+      <div className="mx-auto md:px-12 max-w-7xl w-full">
         <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>
-          <div className="text-center mb-16">
+          <div className="text-center mb-8 md:mb-16 px-4 md:px-0">
             <Heading
               type="h2"
               variant="section"
-              className="text-white mb-6 lg:!text-[130px] tracking-wider"
+              className="text-white 2xl:!text-[130px] tracking-wider"
             >
               Contact Me
             </Heading>
+            
           </div>
+          
         </Reveal>
 
         {/* Contact Form */}
         <Reveal keyframes={fadeInUp} duration={2000} triggerOnce delay={200}>
-          <form className="space-y-4 max-w-xl mx-auto" onSubmit={handleSubmit}>
-            {/* First Name and Last Name side by side */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 !font-text">
+          <form className="space-y-4 px-12 md:px-0 max-w-xl mx-auto" onSubmit={handleSubmit}>
+          <p className="text-gray-700 italic text-left text-sm ">Enter your details below:</p>
+        
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-10 !font-text">
               <div>
                 <label className="block text-white text-sm mb-2">
                   First Name
@@ -71,7 +74,7 @@ export default function ContactSection() {
                   type="text"
                   name="firstName"
                   required
-                  className="w-full bg-transparent border-0 border-b border-white text-white placeholder-white/50 focus:outline-none focus:border-white text-base"
+                  className="w-full bg-transparent border-0 border-b border-white text-white placeholder-white/50 focus:outline-none focus:border-white text-base py-2"
                 />
               </div>
               <div>
@@ -80,7 +83,7 @@ export default function ContactSection() {
                   type="text"
                   name="lastName"
                   required
-                  className="w-full bg-transparent border-0 border-b border-white text-white placeholder-white/50 focus:outline-none focus:border-white text-base"
+                  className="w-full bg-transparent border-0 border-b border-white text-white placeholder-white/50 focus:outline-none focus:border-white text-base py-2"
                 />
               </div>
             </div>
