@@ -4,9 +4,51 @@ import Header from "@/components/Header";
 import FloatingElements from "@/components/FloatingElements";
 import { Poppins, Inter, Montserrat } from "next/font/google";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://marielgenodiala.com";
+
 export const metadata: Metadata = {
-  title: "Portfolio 2025",
-  description: "A modern portfolio website built with Next.js and Tailwind CSS",
+  metadataBase: new URL(siteUrl),
+  title: "Mariel Genodiala - Web Developer",
+  description: "Full-stack web developer with 3 years of experience. Specializing in Next.js, React, JavaScript, Java, and WordPress. Turning ideas into polished digital experiences.",
+  keywords: ["web developer", "full-stack developer", "Next.js", "React", "JavaScript", "Java", "WordPress", "portfolio", "Mariel Genodiala"],
+  authors: [{ name: "Mariel Genodiala" }],
+  creator: "Mariel Genodiala",
+  publisher: "Mariel Genodiala",
+  alternates: {
+    canonical: siteUrl,
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: siteUrl,
+    siteName: "Mariel Genodiala - Web Developer",
+    title: "Mariel genodiala - Web Developer",
+    description: "Full-stack web developer with 3 years of experience. Specializing in Next.js, React, JavaScript, Java, and WordPress. Turning ideas into polished digital experiences.",
+    images: [
+      {
+        url: "/seo_image.png",
+        width: 1200,
+        height: 630,
+        alt: "Mariel Genodiala - Web Developer",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Mariel genodiala - Web Developer",
+    description: "Full-stack web developer with 3 years of experience. Specializing in Next.js, React, JavaScript, Java, and WordPress.",
+    images: ["/seo_image.png"],
+    creator: "@marielgenodiala",
+  },
+  icons: {
+    icon: "/images/mg-logo.png",
+    apple: "/images/mg-logo.png",
+  },
+  other: {
+    "og:image:width": "1200",
+    "og:image:height": "630",
+    "og:image:type": "image/png",
+  },
 };
 
 const poppins = Poppins({
@@ -20,9 +62,29 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: "Mariel Genodiala",
+    jobTitle: "Web Developer",
+    description: "Full-stack web developer with 3 years of experience. Specializing in Next.js, React, JavaScript, Java, and WordPress.",
+    url: siteUrl,
+    image: `${siteUrl}/seo_image.png`,
+    sameAs: [
+      "https://www.linkedin.com/in/mariel-genodiala-059237231/",
+      "https://github.com/marielgenodiala",
+      "https://www.facebook.com/mariel.genodiala.2024/",
+      "https://www.instagram.com/sup_itsmariel/",
+    ],
+  };
+
   return (
     <html lang="en" suppressHydrationWarning className={`${poppins.variable} `}>
       <body className="antialiased">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <Header />
         <main>{children}</main>
         <FloatingElements />
