@@ -38,31 +38,52 @@ export default function TestimonialsSection() {
 
   const testimonials = [
     {
-      name: "Lyndee Crisanto",
-      role: "Mechanical Engineer",
-      content: "I have worked with mariel and she has been extra ordinary.",
-    },
-    {
-      name: "John Doe",
-      role: "Software Developer",
+      name: "Kenet M.",
+      role: "Web Developer",
       content:
-        "Working with Mariel was an amazing experience. Highly professional!",
+        "She's reliable, skilled, and always professional. Mariel's contributions consistently elevate our work.",
     },
     {
-      name: "Jane Smith",
-      role: "Product Manager",
-      content: "Mariel delivered exceptional results beyond our expectations.",
-    },
-    {
-      name: "Mike Johnson",
-      role: "Business Owner",
-      content: "Outstanding work! Mariel brought our vision to life perfectly.",
-    },
-    {
-      name: "Sarah Williams",
-      role: "Marketing Director",
+      name: "Renato D.",
+      role: "Web Developer",
       content:
-        "Professional, creative, and reliable. Would definitely work with Mariel again.",
+        "Working with Mariel makes every project seamless and efficient. She's professional, easy to collaborate with, and highly attentive to detail.",
+    },
+    {
+      name: "Ericka D.",
+      role: "Web Developer",
+      content:
+        "Working with Mariel has been such a great experience. She's not only professional but also very friendly and easy to communicate with.",
+    },
+    {
+      name: "Angelo C.",
+      role: "Client",
+      content:
+        "Mariel did an outstanding job in helping us organize and polish our project materials. Highly recommended for her professionalism and quick turnaround.",
+    },
+    {
+      name: "Emmanuel C. Jr.",
+      role: "Client",
+      content:
+        "Her insights helped us refine our work and approach challenges with a more professional mindset. We truly appreciate her patience, encouragement, and dedication in supporting our group. Working under her guidance has been both a valuable and inspiring experience for all of us.",
+    },
+    {
+      name: "Anonymous",
+      role: "Client",
+      content:
+        "She has been very reliable, attentive to detail, and always delivers what is expected.",
+    },
+    {
+      name: "Fiona T.",
+      role: "Client",
+      content:
+        "As a beginner in this field, I can say this person does not disappoint. She's well-organized and really knows her craft.",
+    },
+    {
+      name: "Cara E.",
+      role: "Web Developer",
+      content:
+        "Mariel was a pleasure to work with — highly professional and reliable!",
     },
   ];
 
@@ -96,7 +117,7 @@ export default function TestimonialsSection() {
         </Reveal>
 
         {/* Responsive testimonial cards: 1 mobile, 2 md, 3 lg+ */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-16 px-4 2xl:px-0 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-16 px-8 md:px-4 2xl:px-0 max-w-7xl mx-auto">
           {visibleTestimonials.map((testimonial) => (
             <div key={testimonial.name} className="text-center flex flex-col h-full">
               {/* Quote icon */}

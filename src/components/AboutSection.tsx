@@ -8,6 +8,7 @@ import { useState } from "react";
 import { IoLogoFacebook } from "react-icons/io5";
 import { AiFillInstagram } from "react-icons/ai";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
+import { MdFullscreen } from "react-icons/md";
 
 
 interface WorkExperience {
@@ -27,6 +28,10 @@ interface PersonalActivity {
 export default function AboutSection() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState<{[key: string]: number}>({});
+  const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
+  const [fullscreenImageIndex, setFullscreenImageIndex] = useState(0);
+  const [fullscreenActivityImages, setFullscreenActivityImages] = useState<string[]>([]);
+  const [hoveredImageIndex, setHoveredImageIndex] = useState<{[key: string]: number | null}>({});
 
   const nextSlide = (activityKey: string, totalImages: number) => {
     setCurrentSlide(prev => ({
@@ -140,20 +145,48 @@ export default function AboutSection() {
     }, 200);
   };
 
+  const openFullscreen = (images: string[], startIndex: number) => {
+    setFullscreenActivityImages(images);
+    setFullscreenImageIndex(startIndex);
+    setIsFullscreenOpen(true);
+  };
+
+  const closeFullscreen = () => {
+    setIsFullscreenOpen(false);
+    setFullscreenActivityImages([]);
+    setFullscreenImageIndex(0);
+  };
+
+  const nextFullscreenImage = () => {
+    setFullscreenImageIndex((prev) => (prev + 1) % fullscreenActivityImages.length);
+  };
+
+  const prevFullscreenImage = () => {
+    setFullscreenImageIndex((prev) => 
+      prev === 0 ? fullscreenActivityImages.length - 1 : prev - 1
+    );
+  };
+
+  const handleFullscreenClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      closeFullscreen();
+    }
+  };
+
   return (
     <>
       <section
         id="about-me"
         className="min-h-screen flex justify-center items-center px-4 xl:py-20 snap-section pt-44 pb-12 md:pt-40 md:pb-20"
       >
-        <div className="mx-auto px-4 md:px-12  max-w-[330px] md:max-w-7xl grid lg:grid-cols-2 gap-8 md:gap-12 items-center w-full">
+        <div className="mx-auto px-10 md:px-12  max-w-[330px] md:max-w-7xl grid lg:grid-cols-2 gap-8 md:gap-12 items-center w-full">
           <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>
             <div className="flex justify-center  ">
               <div className="relative w-[250px] h-[300px] md:w-[300px] md:h-[375px] lg:w-[350px] lg:h-[437px] xl:w-[400px] xl:h-[500px]">
               
-                <div className="absolute top-3 right-3 md:top-4 md:right-4 xl:top-5 xl:right-5 w-full h-full border-[2px] md:border-[3px] border-van-dyke rounded-sm pointer-events-none z-0"></div>
+                <div className="absolute top-3 right-2 md:top-4 md:right-4 xl:top-5 xl:right-5 w-full h-full border-[2px] md:border-[3px] border-van-dyke rounded-sm pointer-events-none z-0"></div>
 
-                <div className="absolute bottom-3 left-3 md:bottom-4 md:left-4 xl:bottom-5 xl:left-5 w-full h-full border-[2px] md:border-[3px] border-dim-gray rounded-sm pointer-events-none z-0"></div>
+                <div className="absolute bottom-3 left-2 md:bottom-4 md:left-4 xl:bottom-5 xl:left-5 w-full h-full border-[2px] md:border-[3px] border-dim-gray rounded-sm pointer-events-none z-0"></div>
 
    
                 <div className="absolute  inset-1 md:inset-1.5  xl:inset-2 overflow-hidden rounded-sm z-10">
@@ -244,7 +277,7 @@ export default function AboutSection() {
             </button>
 
             <div className="p-8">
-              <Heading type="h2" variant="section" className="text-white mb-8 text-center">
+              <Heading type="h2" variant="section" className="text-white mb-8 text-center leading-tight">
                 My Journey
               </Heading>
 
@@ -311,17 +344,36 @@ export default function AboutSection() {
                           <p className="text-gray-300 mb-4">{activity.description}</p>
                           <div className="relative">
                             <div className="grid grid-cols-3 gap-4">
-                              {visibleImages.map((image, imgIndex) => (
-                                <div key={imgIndex} className="aspect-square rounded-lg overflow-hidden">
-                                  <Image
-                                    src={image}
-                                    alt={`${activity.title} ${imgIndex + 1}`}
-                                    width={200}
-                                    height={200}
-                                    className="w-full h-full object-cover hover:scale-105 transition-transform"
-                                  />
-                                </div>
-                              ))}
+                              {visibleImages.map((image, imgIndex) => {
+                                const imageKey = `${activityKey}-${imgIndex}`;
+                                const isHovered = hoveredImageIndex[imageKey] !== null && hoveredImageIndex[imageKey] !== undefined;
+                                // Calculate the actual index in the full images array
+                                const actualImageIndex = (currentImageIndex + imgIndex) % activity.images.length;
+                                
+                                return (
+                                  <div 
+                                    key={imgIndex} 
+                                    className="aspect-square rounded-lg overflow-hidden relative group cursor-pointer"
+                                    onMouseEnter={() => setHoveredImageIndex(prev => ({ ...prev, [imageKey]: imgIndex }))}
+                                    onMouseLeave={() => setHoveredImageIndex(prev => ({ ...prev, [imageKey]: null }))}
+                                    onClick={() => openFullscreen(activity.images, actualImageIndex)}
+                                  >
+                                    <Image
+                                      src={image}
+                                      alt={`${activity.title} ${imgIndex + 1}`}
+                                      width={200}
+                                      height={200}
+                                      className="w-full h-full object-cover hover:scale-105 transition-transform"
+                                    />
+                                    {/* Fullscreen icon - appears on hover */}
+                                    {isHovered && (
+                                      <div className="absolute bottom-2 right-2 z-20 bg-black/60 hover:bg-black/80 rounded p-2 transition-all">
+                                        <MdFullscreen className="text-white" size={20} />
+                                      </div>
+                                    )}
+                                  </div>
+                                );
+                              })}
                             </div>
                             
                             {/* Navigation Buttons */}
@@ -365,6 +417,70 @@ export default function AboutSection() {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Fullscreen Image Viewer */}
+      {isFullscreenOpen && fullscreenActivityImages.length > 0 && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-[60]"
+          onClick={handleFullscreenClick}
+        >
+          {/* Close button */}
+          <button
+            onClick={closeFullscreen}
+            className="absolute top-4 right-4 text-white hover:text-dim-gray p-2 rounded-lg transition-colors z-10"
+            title="Close"
+          >
+            ×
+          </button>
+
+          {/* Image container */}
+          <div className="relative w-full h-full flex items-center justify-center p-8">
+            <div className="relative max-w-7xl max-h-full">
+              <Image
+                src={fullscreenActivityImages[fullscreenImageIndex]}
+                alt={`Fullscreen image ${fullscreenImageIndex + 1}`}
+                width={1200}
+                height={800}
+                className="max-w-full max-h-[90vh] object-contain rounded-lg"
+                priority
+              />
+            </div>
+
+            {/* Navigation buttons */}
+            {fullscreenActivityImages.length > 1 && (
+              <>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    prevFullscreenImage();
+                  }}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-black/60 hover:bg-black/80 text-white p-3 rounded-full transition-colors"
+                  title="Previous"
+                >
+                  <IoChevronBack size={28} />
+                </button>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    nextFullscreenImage();
+                  }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-black/60 hover:bg-black/80 text-white p-3 rounded-full transition-colors"
+                  title="Next"
+                >
+                  <IoChevronForward size={28} />
+                </button>
+              </>
+            )}
+
+            {/* Image counter */}
+            {fullscreenActivityImages.length > 1 && (
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 bg-black/60 text-white px-4 py-2 rounded-lg">
+                {fullscreenImageIndex + 1} / {fullscreenActivityImages.length}
+              </div>
+            )}
           </div>
         </div>
       )}

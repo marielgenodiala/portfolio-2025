@@ -19,8 +19,8 @@ export default function FloatingElements() {
     : currentSection.toString().padStart(2, "0");
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-40">
-      <div className="mx-auto px-4 lg:px-12 h-full relative">
+    <div className="fixed inset-0 pointer-events-none z-40 overflow-x-hidden">
+      <div className="mx-auto px-4 lg:px-12 h-full relative w-full max-w-full">
         
         <div className="absolute left-4 lg:left-8 bottom-8 flex flex-col space-y-6 pointer-events-auto">
           <a

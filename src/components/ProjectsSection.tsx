@@ -129,7 +129,7 @@ export default function ProjectsSection() {
       id="projects"
       className="min-h-screen flex justify-center items-center px-4 py-20 snap-section pt-28 pb-12 md:pb-20"
     >
-      <div className="mx-auto px-12 max-w-[400px] md:max-w-[800px] lg:max-w-6xl xl:max-w-7xl">
+      <div className="mx-auto px-12 max-w-[350px] md:max-w-[800px] lg:max-w-6xl xl:max-w-7xl">
         <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>
           <div className="text-center mb-16">
             <Heading type="h2" variant="section" className="text-white mb-6">
@@ -143,7 +143,7 @@ export default function ProjectsSection() {
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`w-28 md:w-36 lg:w-44 py-2 md:py-2.5 lg:py-3 rounded-full font-text text-xs md:text-xs lg:text-sm transition-colors ${
+                    className={`w-20 md:w-36 lg:w-44 py-2 md:py-2.5 lg:py-3 rounded-full font-text text-xs md:text-xs lg:text-sm transition-colors ${
                       activeTab === tab
                         ? "bg-dim-gray text-black"
                         : "bg-white text-black"
