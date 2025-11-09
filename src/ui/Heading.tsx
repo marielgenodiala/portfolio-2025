@@ -2,7 +2,7 @@ import React from "react";
 
 interface HeadingProps {
   type: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
-  variant?: "default" | "hero" | "section" | "subtitle" | "card";
+  variant?: "default" | "hero" | "section" | "subtitle" | "card" | "heroH2";
   className?: string;
   children: React.ReactNode;
 }
@@ -19,6 +19,7 @@ const Heading: React.FC<HeadingProps> = ({
     default: "font-heading",
     hero: "text-8xl md:text-9xl lg:text-[12rem] leading-none font-heading",
     section: "font-poppins",
+    heroH2: "text-[40px] md:!text-[80px] lg:!text-[45x] xl:!text-[58px] 2xl:!text-[110px]  leading-none",
     subtitle: "text-2xl md:text-3xl lg:text-4xl font-heading",
     card: "text-xl md:text-2xl   font-heading",
   };

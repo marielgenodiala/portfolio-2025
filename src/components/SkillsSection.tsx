@@ -78,7 +78,7 @@ export default function SkillsSection() {
       id="skills"
       className="min-h-screen flex justify-center items-center px-4 snap-section pt-28 pb-12 md:pb-20"
       >
-        <div className="mx-auto px-12 max-w-7xl">
+        <div className="mx-auto px-12 lg:max-w-[900px] xl:max-w-7xl">
         <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>
           <div className="text-center mb-16">
             <Heading type="h2" variant="section" className="text-white mb-6">

@@ -9,16 +9,16 @@ export default function HomeSection() {
   return (
       <section
         id="home"
-        className="snap-section-home flex items-center px-8 relative overflow-visible"
+        className="snap-section-home flex items-center xl:px-8 relative overflow-visible"
       >
-      <div className="mx-auto px-1 md:px-5 lg:px-10 2xl:px-5 w-full h-full grid grid-cols-1 lg:grid-cols-2 gap-0">
+      <div className="mx-auto px-1 md:px-5 lg:px-0 2xl:px-5 w-full h-full grid grid-cols-1 lg:grid-cols-2 gap-0">
         {/* Left Side - Text Content */}
         <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>
-          <div className="flex flex-col justify-center items-center lg:items-start text-center lg:text-left h-full pt-0 lg:pt-16">
+          <div className="flex flex-col justify-center items-center lg:pl-20 xl:pl-0 lg:items-start text-center lg:text-left h-full pt-0 lg:pt-16">
             <Heading
               type="h1"
               variant="hero"
-              className="mb-2 md:mb-3 lg:mb-8 text-[80px] md:text-[100px] lg:text-[65px] xl:!text-[85px] 2xl:!text-[120px] lg:mt-12 xl:mt-0"
+              className="mb-2 md:mb-3 lg:mb-8 text-[80px] md:text-[100px] lg:text-[65px] xl:!text-[85px] 2xl:!text-[100px] 3xl:!text-[120px] lg:mt-12 xl:mt-0"
             >
               <span className="text-dim-gray">
                 {"Hi!".split("").map((char, index) => (
@@ -34,8 +34,8 @@ export default function HomeSection() {
             </Heading>
             <Heading
               type="h2"
-              variant="section"
-              className="text-dim-gray mb-4 md:mb-5 lg:mb-12 text-[40px] md:text-[80px] lg:text-[45px] xl:text-[58px] 2xl:!text-[110px]  leading-none"
+              variant="heroH2"
+              className="text-dim-gray mb-4 md:mb-5 lg:mb-12 text-[50px] md:!text-[80px] lg:!text-[50px] xl:!text-[58px] 2xl:!text-[80px]  3xl:!text-[110px]  leading-none"
             >
               Web Developer
             </Heading>
