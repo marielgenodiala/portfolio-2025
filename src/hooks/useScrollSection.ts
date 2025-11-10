@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const sections = [
   'home',
@@ -16,37 +16,52 @@ export function useScrollSection() {
   const [currentSection, setCurrentSection] = useState(1);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const snapContainer = document.querySelector('.snap-container');
-      if (!snapContainer) return;
+    const snapContainer = document.querySelector('.snap-container') as HTMLElement;
+    if (!snapContainer) return;
 
-      const scrollTop = snapContainer.scrollTop;
-      const viewportHeight = window.innerHeight;
-
-      // Calculate which section index based on scroll position
-      const sectionIndex = Math.round(scrollTop / viewportHeight);
+    // Handle horizontal scroll to detect current section
+    const handleHorizontalScroll = () => {
+      const scrollLeft = snapContainer.scrollLeft;
+      const sectionWidth = window.innerWidth;
+      
+      // Calculate which section is currently visible
+      const sectionIndex = Math.round(scrollLeft / sectionWidth);
       const newSection = Math.max(1, Math.min(sections.length, sectionIndex + 1));
 
-      if (newSection !== currentSection) {
-        setCurrentSection(newSection);
-      }
+      setCurrentSection((prevSection) => {
+        if (prevSection !== newSection) {
+          return newSection;
+        }
+        return prevSection;
+      });
     };
 
-    // Initial check
-    setTimeout(() => {
-      handleScroll();
+    // Listen to scroll events for updates
+    snapContainer.addEventListener('scroll', handleHorizontalScroll, { passive: true });
+    
+    // Also use a periodic check to ensure we catch any missed updates
+    const checkInterval = setInterval(() => {
+      handleHorizontalScroll();
     }, 100);
 
-    const snapContainer = document.querySelector('.snap-container');
+    // Initial check
+    const initialTimeout = setTimeout(() => {
+      handleHorizontalScroll();
+    }, 100);
 
-    if (snapContainer) {
-      snapContainer.addEventListener('scroll', handleScroll);
+    // Handle window resize to recalculate
+    const handleResize = () => {
+      handleHorizontalScroll();
+    };
+    window.addEventListener('resize', handleResize);
 
-      return () => {
-        snapContainer.removeEventListener('scroll', handleScroll);
-      };
-    }
-  }, [currentSection]);
+    return () => {
+      snapContainer.removeEventListener('scroll', handleHorizontalScroll);
+      window.removeEventListener('resize', handleResize);
+      clearInterval(checkInterval);
+      clearTimeout(initialTimeout);
+    };
+  }, []); // Remove currentSection from dependencies to avoid re-renders
 
   return {
     currentSection,

@@ -16,11 +16,16 @@ body {
   overflow: hidden;
 }
 
-/* Snap scroll container */
+/* Horizontal section container - for section-to-section navigation */
 .snap-container {
-  scroll-snap-type: y mandatory;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 100vw;
   height: 100vh;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
   /* Hide scrollbar for all browsers */
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none;  /* IE and Edge */
@@ -32,17 +37,35 @@ body {
   height: 0 !important;
 }
 
-/* Snap scroll sections */
-.snap-section {
+/* Individual section wrapper - each section is a horizontal slide */
+.snap-section-wrapper {
+  flex: 0 0 100vw;
+  width: 100vw;
+  height: 100vh;
   scroll-snap-align: start;
-  scroll-snap-stop: normal;
+  scroll-snap-stop: always;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  /* Hide scrollbar for all browsers */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+}
+
+.snap-section-wrapper::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari, Opera */
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Snap scroll sections - vertical scrolling within each section */
+.snap-section {
   min-height: 100vh;
+  width: 100%;
 }
 
 /* Homepage specific - always centered, no top spacing */
 .snap-section-home {
-  scroll-snap-align: start;
-  scroll-snap-stop: normal;
   height: 100vh;
   min-height: 100vh;
 }

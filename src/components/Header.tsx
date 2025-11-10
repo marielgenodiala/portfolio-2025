@@ -3,13 +3,15 @@
 import { useState, useEffect, useRef } from "react";
 import { CgMenuRightAlt } from "react-icons/cg";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 import { IoClose } from "react-icons/io5";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const pathname = usePathname();
 
   // Prevent scroll when menu is open
   useEffect(() => {
@@ -49,30 +51,76 @@ export default function Header() {
   }, [isMenuOpen]);
 
   const scrollToSection = (sectionId: string) => {
-    // Update URL with hash
-    router.push(`#${sectionId}`);
-
-    // Use snap scroll to directly flip to section
-    const element = document.getElementById(sectionId);
-    if (element) {
-      if (sectionId === "home") {
-        // Home section doesn't need offset - it's positioned naturally
-        element.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-      } else {
-        // Other sections need offset to account for fixed header
-        const headerHeight = 112; // h-28 = 112px
-        const elementPosition = element.offsetTop - headerHeight;
+    // If on thank-you page, navigate to root first, then add hash
+    if (pathname === '/thank-you') {
+      router.push(`/#${sectionId}`);
+      // Wait for navigation, then scroll
+      setTimeout(() => {
+        const sections = ['home', 'about-me', 'projects', 'skills', 'services', 'testimonials', 'contact'];
+        const sectionIndex = sections.indexOf(sectionId);
         
-        window.scrollTo({
-          top: elementPosition,
-          behavior: "smooth"
-        });
+        if (sectionIndex !== -1) {
+          const snapContainer = document.querySelector('.snap-container') as HTMLElement;
+          if (snapContainer) {
+            const sectionWidth = window.innerWidth;
+            const targetScrollLeft = sectionIndex * sectionWidth;
+            
+            // Use instant scroll (no animation) for menu navigation
+            snapContainer.scrollTo({
+              left: targetScrollLeft,
+              behavior: 'auto'
+            });
+          }
+        }
+      }, 100);
+    } else {
+      // Update URL with hash
+      router.push(`#${sectionId}`);
+
+      // Navigate horizontally to section with instant scroll (no animation)
+      const sections = ['home', 'about-me', 'projects', 'skills', 'services', 'testimonials', 'contact'];
+      const sectionIndex = sections.indexOf(sectionId);
+      
+      if (sectionIndex !== -1) {
+        const snapContainer = document.querySelector('.snap-container') as HTMLElement;
+        if (snapContainer) {
+          const sectionWidth = window.innerWidth;
+          const targetScrollLeft = sectionIndex * sectionWidth;
+          
+          // Use instant scroll (no animation) for menu navigation
+          snapContainer.scrollTo({
+            left: targetScrollLeft,
+            behavior: 'auto'
+          });
+        }
       }
     }
     setIsMenuOpen(false);
+  };
+
+  const handleLogoClick = () => {
+    // Navigate to root and scroll to home section
+    if (pathname === '/thank-you') {
+      router.push('/#home');
+      setTimeout(() => {
+        const snapContainer = document.querySelector('.snap-container') as HTMLElement;
+        if (snapContainer) {
+          snapContainer.scrollTo({
+            left: 0,
+            behavior: 'auto'
+          });
+        }
+      }, 100);
+    } else {
+      router.push('/#home');
+      const snapContainer = document.querySelector('.snap-container') as HTMLElement;
+      if (snapContainer) {
+        snapContainer.scrollTo({
+          left: 0,
+          behavior: 'auto'
+        });
+      }
+    }
   };
 
   return (
@@ -81,7 +129,11 @@ export default function Header() {
         <div className="mx-auto px-4 lg:px-12">
           <div className="flex items-center justify-between h-28">
             {/* Logo - Left Side */}
-            <div className="flex items-center py-4">
+            <button
+              onClick={handleLogoClick}
+              className="flex items-center py-4 cursor-pointer"
+              aria-label="Go to Home section"
+            >
               <Image
                 src="/images/mg-logo.png"
                 alt="MG Logo"
@@ -89,7 +141,7 @@ export default function Header() {
                 height={110}
                 priority
               />
-            </div>
+            </button>
             {/* Hamburger Menu Button - Right Side */}
             <button
               className="text-white py-4"

@@ -127,7 +127,7 @@ export default function ProjectsSection() {
   return (
     <section
       id="projects"
-      className="min-h-screen flex justify-center items-center px-4 py-20 snap-section pt-28 pb-12 md:pb-20"
+      className="min-h-screen flex justify-center items-center px-4 pt-28 md:pt-36 pb-20 snap-section"
     >
       <div className="mx-auto px-12 max-w-[350px] md:max-w-[800px] lg:max-w-6xl xl:max-w-7xl">
         <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>
@@ -252,7 +252,7 @@ export default function ProjectsSection() {
           )}
 
           {activeTab === "Design" && (
-            <div className="w-full max-w-4xl mx-auto">
+            <div className="w-full lg:max-w-[800px] xl:max-w-4xl mx-auto">
               {/* Disclaimer */}
               <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>
                 <div className="text-center mb-8">

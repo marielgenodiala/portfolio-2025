@@ -177,7 +177,7 @@ export default function AboutSection() {
     <>
       <section
         id="about-me"
-        className="min-h-screen flex justify-center items-center px-4 xl:py-20 snap-section pt-44 pb-12 md:pt-40 md:pb-20"
+        className="min-h-screen flex justify-center items-center px-4 pt-36 pb-20 snap-section"
       >
         <div className="mx-auto px-10 md:px-12  max-w-[330px] md:max-w-7xl grid lg:grid-cols-2 gap-8 md:gap-12 items-center w-full">
           <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>
@@ -232,7 +232,7 @@ export default function AboutSection() {
                 </a>
               </div>
 
-              <div className="max-w-sm md:max-w-md lg:max-w-xl mx-auto md:mx-0">
+              <div className="max-w-sm md:max-w-lg lg:max-w-xl mx-auto md:mx-0">
                 <p className="text-sm md:text-md  xl:text-lg text-white mb-4 md:mb-6 font-text text-left">
                   I&apos;m a full-stack web developer with almost 3 years of experience crafting
                   websites and web apps using Next.js, React, JavaScript, Java,
@@ -252,6 +252,7 @@ export default function AboutSection() {
               <div className="flex justify-start">
                 <button 
                   onClick={openModal}
+                  aria-label="Learn more about Mariel Genodiala"
                   className="rounded-full bg-gunmetal text-white py-2 md:py-3 px-6 md:px-8 text-sm md:text-base font-button hover:bg-dim-gray transition-colors"
                 >
                   Learn More About Me

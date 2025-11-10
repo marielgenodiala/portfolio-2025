@@ -105,19 +105,19 @@ export default function TestimonialsSection() {
   return (
     <section
       id="testimonials"
-      className="min-h-screen flex justify-center items-center px-4 py-20 snap-section pt-28 pb-12 md:pb-20"
+      className="min-h-screen flex justify-center items-center px-4 pt-28 md:pt-36 pb-20 snap-section"
     >
       <div className="mx-auto md:px-12 max-w-7xl">
         <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>
-          <div className="text-center px-4 md:px-0 mb-8 md:mb-16">
-            <Heading type="h2" variant="section" className="text-white mb-6">
+          <div className="text-center px-4 md:px-0 mb-6 md:mb-16">
+            <Heading type="h2" variant="section" className="text-white ">
               Feedback & Experiences
             </Heading>
           </div>
         </Reveal>
 
         {/* Responsive testimonial cards: 1 mobile, 2 md, 3 lg+ */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-16 px-8 md:px-4 2xl:px-0 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-8 md:mb-16 px-8 md:px-4 2xl:px-0 max-w-7xl mx-auto">
           {visibleTestimonials.map((testimonial) => (
             <div key={testimonial.name} className="text-center flex flex-col h-full">
               {/* Quote icon */}
@@ -152,7 +152,7 @@ export default function TestimonialsSection() {
         {/* Pagination and Navigation */}
         <Reveal keyframes={fadeInUp} duration={2000} triggerOnce delay={600}>
           {/* Mobile: Centered below testimonials */}
-          <div className="md:hidden flex flex-col items-center justify-center mt-8 space-y-4">
+          <div className="md:hidden flex flex-col items-center justify-center space-y-3">
             {/* Pagination indicator - single line (centered) */}
             <div className="relative w-32 h-1 bg-white/50">
               <div
@@ -165,16 +165,18 @@ export default function TestimonialsSection() {
             </div>
 
             {/* Navigation arrows (centered) */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               <button
                 onClick={handlePrev}
                 className="text-white hover:text-dim-gray transition-colors"
+                aria-label="Previous testimonial"
               >
                 <MdNavigateBefore className="text-3xl" />
               </button>
               <button
                 onClick={handleNext}
                 className="text-white hover:text-dim-gray transition-colors"
+                aria-label="Next testimonial"
               >
                 <MdNavigateNext className="text-3xl" />
               </button>

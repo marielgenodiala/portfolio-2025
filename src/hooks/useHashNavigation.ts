@@ -7,30 +7,27 @@ export function useHashNavigation() {
   const router = useRouter();
 
   useEffect(() => {
+    const sections = ['home', 'about-me', 'projects', 'skills', 'services', 'testimonials', 'contact'];
+    
     const handleHashChange = () => {
       const hash = window.location.hash.slice(1); // Remove the # symbol
       if (hash) {
-        const element = document.getElementById(hash);
-        if (element) {
-          // Small delay to ensure page is fully loaded
-          setTimeout(() => {
-            if (hash === "home") {
-              // Home section doesn't need offset - it's positioned naturally
-              element.scrollIntoView({ 
-                behavior: "smooth",
-                block: "start"
-              });
-            } else {
-              // Other sections need offset to account for fixed header
-              const headerHeight = 112; // h-28 = 112px
-              const elementPosition = element.offsetTop - headerHeight;
+        const sectionIndex = sections.indexOf(hash);
+        if (sectionIndex !== -1) {
+          const snapContainer = document.querySelector('.snap-container') as HTMLElement;
+          if (snapContainer) {
+            // Small delay to ensure page is fully loaded
+            setTimeout(() => {
+              const sectionWidth = window.innerWidth;
+              const targetScrollLeft = sectionIndex * sectionWidth;
               
-              window.scrollTo({
-                top: elementPosition,
-                behavior: "smooth"
+              // Use instant scroll (no animation) for navigation
+              snapContainer.scrollTo({
+                left: targetScrollLeft,
+                behavior: 'auto'
               });
-            }
-          }, 100);
+            }, 100);
+          }
         }
       }
     };

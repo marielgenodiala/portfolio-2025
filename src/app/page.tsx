@@ -1,6 +1,7 @@
 "use client";
 
 import { useHashNavigation } from "@/hooks/useHashNavigation";
+import { useHorizontalSectionNavigation } from "@/hooks/useHorizontalSectionNavigation";
 import HomeSection from "@/components/HomeSection";
 import AboutSection from "@/components/AboutSection";
 import ProjectsSection from "@/components/ProjectsSection";
@@ -11,15 +12,25 @@ import ContactSection from "@/components/ContactSection";
 
 export default function Home() {
   useHashNavigation();
+  useHorizontalSectionNavigation();
+  
+  const sections = [
+    { id: 'home', component: <HomeSection /> },
+    { id: 'about-me', component: <AboutSection /> },
+    { id: 'projects', component: <ProjectsSection /> },
+    { id: 'skills', component: <SkillsSection /> },
+    { id: 'services', component: <ServicesSection /> },
+    { id: 'testimonials', component: <TestimonialsSection /> },
+    { id: 'contact', component: <ContactSection /> },
+  ];
+
   return (
     <div className="bg-rich-black snap-container">
-      <HomeSection />
-      <AboutSection />
-      <ProjectsSection />
-      <SkillsSection />
-      <ServicesSection />
-      <TestimonialsSection />
-      <ContactSection />
+      {sections.map((section) => (
+        <div key={section.id} className="snap-section-wrapper">
+          {section.component}
+        </div>
+      ))}
     </div>
   );
 }
