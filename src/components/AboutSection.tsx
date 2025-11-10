@@ -216,6 +216,7 @@ export default function AboutSection() {
                   href="https://www.facebook.com/mariel.genodiala.2024/" 
                   target="_blank" 
                   rel="noopener noreferrer"
+                  aria-label="Visit Mariel Genodiala's Facebook profile"
                   className="text-white hover:text-dim-gray transition-colors"
                 >
                   <IoLogoFacebook size={24} />
@@ -224,6 +225,7 @@ export default function AboutSection() {
                   href="https://www.instagram.com/sup_itsmariel/" 
                   target="_blank" 
                   rel="noopener noreferrer"
+                  aria-label="Visit Mariel Genodiala's Instagram profile"
                   className="text-white hover:text-dim-gray transition-colors"
                 >
                   <AiFillInstagram size={24} />

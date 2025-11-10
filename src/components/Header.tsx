@@ -84,7 +84,7 @@ export default function Header() {
             <div className="flex items-center py-4">
               <Image
                 src="/images/mg-logo.png"
-                alt="logo"
+                alt="MG Logo"
                 width={110}
                 height={110}
                 priority
@@ -94,8 +94,10 @@ export default function Header() {
             <button
               className="text-white py-4"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={isMenuOpen}
             >
-              <CgMenuRightAlt className="w-8 h-8" />
+              <CgMenuRightAlt className="w-8 h-8" aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -113,8 +115,9 @@ export default function Header() {
             <button
               className="absolute top-4 right-4 text-white"
               onClick={() => setIsMenuOpen(false)}
+              aria-label="Close navigation menu"
             >
-              <IoClose className="w-6 h-6" />
+              <IoClose className="w-6 h-6" aria-hidden="true" />
             </button>
 
             {/* Menu Items */}
@@ -123,42 +126,49 @@ export default function Header() {
                 <button
                   onClick={() => scrollToSection("home")}
                   className="block w-full text-left text-white font-heading text-lg uppercase border-b border-paynes-gray pb-2 hover:text-dim-gray transition-colors"
+                  aria-label="Navigate to Home section"
                 >
                   HOME
                 </button>
                 <button
                   onClick={() => scrollToSection("about-me")}
                   className="block w-full text-left text-white font-heading text-lg uppercase border-b border-paynes-gray pb-2 hover:text-dim-gray transition-colors"
+                  aria-label="Navigate to About Me section"
                 >
                   ABOUT ME
                 </button>
                 <button
                   onClick={() => scrollToSection("projects")}
                   className="block w-full text-left text-white font-heading text-lg uppercase border-b border-paynes-gray pb-2 hover:text-dim-gray transition-colors"
+                  aria-label="Navigate to Projects section"
                 >
                   PROJECTS
                 </button>
                 <button
                   onClick={() => scrollToSection("skills")}
                   className="block w-full text-left text-white font-heading text-lg uppercase border-b border-paynes-gray pb-2 hover:text-dim-gray transition-colors"
+                  aria-label="Navigate to Skills section"
                 >
                   SKILLS
                 </button>
                 <button
                   onClick={() => scrollToSection("services")}
                   className="block w-full text-left text-white font-heading text-lg uppercase border-b border-paynes-gray pb-2 hover:text-dim-gray transition-colors"
+                  aria-label="Navigate to Services section"
                 >
                   SERVICES
                 </button>
                 <button
                   onClick={() => scrollToSection("testimonials")}
                   className="block w-full text-left text-white font-heading text-lg uppercase border-b border-paynes-gray pb-2 hover:text-dim-gray transition-colors"
+                  aria-label="Navigate to Testimonials section"
                 >
                   TESTIMONIALS
                 </button>
                 <button
                   onClick={() => scrollToSection("contact")}
                   className="block w-full text-left text-white font-heading text-lg uppercase border-b border-paynes-gray pb-2 hover:text-dim-gray transition-colors"
+                  aria-label="Navigate to Contact section"
                 >
                   CONTACT
                 </button>

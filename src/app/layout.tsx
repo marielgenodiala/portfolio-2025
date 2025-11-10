@@ -5,12 +5,12 @@ import Header from "@/components/Header";
 import FloatingElements from "@/components/FloatingElements";
 import { Poppins } from "next/font/google";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://marielgenodiala.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.marielgenodiala.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: "Mariel Genodiala - Web Developer",
-  description: "Full-stack web developer with 3 years of experience. Specializing in Next.js, React, JavaScript, Java, and WordPress. Turning ideas into polished digital experiences.",
+  description: "Full-stack web developer. Specializing in Next.js, React, JavaScript, Java, and WordPress. Turning ideas into polished digital experiences.",
   keywords: ["web developer", "full-stack developer", "Next.js", "React", "JavaScript", "Java", "WordPress", "portfolio", "Mariel Genodiala"],
   authors: [{ name: "Mariel Genodiala" }],
   creator: "Mariel Genodiala",
@@ -23,8 +23,8 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: siteUrl,
     siteName: "Mariel Genodiala - Web Developer",
-    title: "Mariel genodiala - Web Developer",
-    description: "Full-stack web developer with 3 years of experience. Specializing in Next.js, React, JavaScript, Java, and WordPress. Turning ideas into polished digital experiences.",
+    title: "Mariel Genodiala - Web Developer",
+    description: "Full-stack web developer. Specializing in Next.js, React, JavaScript, Java, and WordPress. Turning ideas into polished digital experiences.",
     images: [
       {
         url: "/seo_image.png",
@@ -36,8 +36,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Mariel genodiala - Web Developer",
-    description: "Full-stack web developer with 3 years of experience. Specializing in Next.js, React, JavaScript, Java, and WordPress.",
+    title: "Mariel Genodiala - Web Developer",
+    description: "Full-stack web developer. Specializing in Next.js, React, JavaScript, Java, and WordPress.",
     images: ["/seo_image.png"],
     creator: "@marielgenodiala",
   },
@@ -68,7 +68,7 @@ export default function RootLayout({
     "@type": "Person",
     name: "Mariel Genodiala",
     jobTitle: "Web Developer",
-    description: "Full-stack web developer with 3 years of experience. Specializing in Next.js, React, JavaScript, Java, and WordPress.",
+    description: "Full-stack web developer. Specializing in Next.js, React, JavaScript, Java, and WordPress.",
     url: siteUrl,
     image: `${siteUrl}/seo_image.png`,
     sameAs: [

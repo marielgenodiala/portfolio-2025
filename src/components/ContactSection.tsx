@@ -67,20 +67,22 @@ export default function ContactSection() {
         
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-10 !font-text">
               <div>
-                <label className="block text-white text-sm mb-2">
+                <label htmlFor="firstName" className="block text-white text-sm mb-2">
                   First Name
                 </label>
                 <input
                   type="text"
+                  id="firstName"
                   name="firstName"
                   required
                   className="w-full bg-transparent border-0 border-b border-white text-white placeholder-white/50 focus:outline-none focus:border-white text-base py-2"
                 />
               </div>
               <div>
-                <label className="block text-white text-sm mb-2">Last Name</label>
+                <label htmlFor="lastName" className="block text-white text-sm mb-2">Last Name</label>
                 <input
                   type="text"
+                  id="lastName"
                   name="lastName"
                   required
                   className="w-full bg-transparent border-0 border-b border-white text-white placeholder-white/50 focus:outline-none focus:border-white text-base py-2"
@@ -90,9 +92,10 @@ export default function ContactSection() {
 
             {/* Email field */}
             <div>
-              <label className="block text-white text-sm mb-2">Email</label>
+              <label htmlFor="email" className="block text-white text-sm mb-2">Email</label>
               <input
                 type="email"
+                id="email"
                 name="email"
                 required
                 className="w-full bg-transparent border-0 border-b border-white text-white placeholder-white/50 focus:outline-none focus:border-white py-2 text-base"
@@ -101,9 +104,10 @@ export default function ContactSection() {
 
             {/* Subject field */}
             <div>
-              <label className="block text-white text-sm mb-2">Subject</label>
+              <label htmlFor="subject" className="block text-white text-sm mb-2">Subject</label>
               <input
                 type="text"
+                id="subject"
                 name="subject"
                 required
                 className="w-full bg-transparent border-0 border-b border-white text-white placeholder-white/50 focus:outline-none focus:border-white py-2 text-base"
@@ -112,8 +116,9 @@ export default function ContactSection() {
 
             {/* Message field */}
             <div>
-              <label className="block text-white text-sm mb-2">Message</label>
+              <label htmlFor="message" className="block text-white text-sm mb-2">Message</label>
               <textarea
+                id="message"
                 rows={4}
                 name="message"
                 required

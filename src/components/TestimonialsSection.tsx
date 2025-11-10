@@ -133,9 +133,9 @@ export default function TestimonialsSection() {
               {/* Name and Role - pushed to bottom on md and above */}
               <div className="md:mt-auto">
                 <Heading
-                  type="h4"
+                  type="h3"
                   variant="card"
-                  className="text-white font-bold text-lg mb-1"
+                  className="text-white font-bold text-lg mb-1 "
                 >
                   {testimonial.name}
                 </Heading>
@@ -201,12 +201,14 @@ export default function TestimonialsSection() {
             <div className="flex items-center">
               <button
                 onClick={handlePrev}
+                aria-label="Previous testimonial"
                 className="text-white hover:text-dim-gray transition-colors"
               >
                 <MdNavigateBefore className="text-3xl" />
               </button>
               <button
                 onClick={handleNext}
+                aria-label="Next testimonial"
                 className="text-white hover:text-dim-gray transition-colors"
               >
                 <MdNavigateNext className="text-3xl" />
