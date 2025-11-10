@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import Header from "@/components/Header";
 import FloatingElements from "@/components/FloatingElements";
@@ -78,6 +79,8 @@ export default function RootLayout({
     ],
   };
 
+  const gaId = process.env.NEXT_PUBLIC_GA_ID;
+
   return (
     <html lang="en" suppressHydrationWarning className={`${poppins.variable} `}>
       <body className="antialiased">
@@ -85,6 +88,23 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        {/* Google Analytics */}
+        {gaId && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gaId}');
+              `}
+            </Script>
+          </>
+        )}
         <Header />
         <main>{children}</main>
         <FloatingElements />
