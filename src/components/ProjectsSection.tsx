@@ -58,7 +58,7 @@ export default function ProjectsSection() {
     {
       title: "AI Agent Integration",
       role: "Full-Stack Developer",
-      description: "Integrated an AI-powered tool that analyzes data from specific APIs to enhance site functionality. This tool connects the product API to a chatbot, enabling it to provide accurate responses to customer product inquiries based on API-integrated data.",
+      description: "Developed an AI-powered chat support agent integrated into a website that handles specific customer queries. The system generates intelligent responses by analyzing data from connected APIs, providing accurate and context-aware support.",
       tools: ["Docker", "Javascript", "OpenAI", "Supabase"],
       image: "/images/project-section/chatbot.png",
     },
@@ -127,7 +127,7 @@ export default function ProjectsSection() {
   return (
     <section
       id="projects"
-      className="min-h-screen flex justify-center items-center px-4 pt-28 md:pt-36 pb-20 snap-section"
+      className="min-h-screen flex justify-center items-center px-4 pt-28 md:pt-36 2xl:pt-28 pb-20 2xl:pb-12 snap-section"
     >
       <div className="mx-auto px-12 max-w-[350px] md:max-w-[800px] lg:max-w-6xl xl:max-w-7xl">
         <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>

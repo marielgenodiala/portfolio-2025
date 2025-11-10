@@ -79,11 +79,18 @@ export default function TestimonialsSection() {
       content:
         "As a beginner in this field, I can say this person does not disappoint. She's well-organized and really knows her craft.",
     },
+   
     {
-      name: "Cara E.",
+      name: "Cara Carmel E.",
       role: "Web Developer",
       content:
-        "Mariel was a pleasure to work with — highly professional and reliable!",
+        "She brings a positive attitude and clear communication to every project.",
+    },
+    {
+      name: "John Vergil A.",
+      role: "Software Engineer",
+      content:
+        "Mariel is a reliable collaborator. She puts a lot of effort on her projects and delivers what is necessary to accomplish her tasks.",
     },
   ];
 

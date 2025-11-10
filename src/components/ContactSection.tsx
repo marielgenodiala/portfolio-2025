@@ -43,7 +43,7 @@ export default function ContactSection() {
   return (
     <section
       id="contact"
-      className="min-h-screen flex justify-center items-center px-4 pt-28 md:pt-36 pb-20 snap-section"
+      className="min-h-screen flex justify-center items-center px-4 pt-28 md:pt-36 2xl:pt-20 pb-20 snap-section"
     >
       <div className="mx-auto md:px-12 max-w-7xl w-full">
         <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>

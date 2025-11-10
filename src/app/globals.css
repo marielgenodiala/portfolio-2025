@@ -14,6 +14,7 @@ body {
   font-family: 'Poppins', sans-serif;
   scroll-behavior: smooth;
   overflow: hidden;
+  min-height: 100vh;
 }
 
 /* Horizontal section container - for section-to-section navigation */
@@ -42,6 +43,7 @@ body {
   flex: 0 0 100vw;
   width: 100vw;
   height: 100vh;
+  min-height: 100vh;
   scroll-snap-align: start;
   scroll-snap-stop: always;
   overflow-y: auto;
@@ -50,6 +52,9 @@ body {
   /* Hide scrollbar for all browsers */
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none;  /* IE and Edge */
+  /* Ensure padding is respected on Safari */
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
 }
 
 .snap-section-wrapper::-webkit-scrollbar {
@@ -58,10 +63,48 @@ body {
   height: 0 !important;
 }
 
+/* Safari iOS specific fixes - only applies to Safari iOS */
+@supports (-webkit-touch-callout: none) {
+  /* Fix viewport height for Safari iOS */
+  html {
+    height: -webkit-fill-available;
+  }
+  
+  body {
+    min-height: -webkit-fill-available;
+  }
+  
+  .snap-section-wrapper {
+    height: -webkit-fill-available;
+  }
+  
+  /* Ensure sections with padding classes work correctly on Safari iOS */
+  .snap-section[class*="pt-"],
+  .snap-section[class*="pb-"],
+  .snap-section[class*="py-"] {
+    /* Force padding to render on Safari iOS */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    /* Ensure padding is included in height calculation */
+    will-change: transform;
+  }
+  
+  /* Fix for sections that might have padding issues */
+  .snap-section {
+    /* Ensure padding is respected */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    min-height: -webkit-fill-available;
+  }
+}
+
 /* Snap scroll sections - vertical scrolling within each section */
 .snap-section {
   min-height: 100vh;
   width: 100%;
+  /* Ensure padding is respected */
+  box-sizing: border-box;
+  position: relative;
 }
 
 /* Homepage specific - always centered, no top spacing */

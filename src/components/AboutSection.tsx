@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Heading } from "@/ui";
 import { Reveal } from "react-awesome-reveal";
 import { fadeInUp } from "@/components/common/animations";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { IoLogoFacebook } from "react-icons/io5";
 import { AiFillInstagram } from "react-icons/ai";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
@@ -32,6 +32,12 @@ export default function AboutSection() {
   const [fullscreenImageIndex, setFullscreenImageIndex] = useState(0);
   const [fullscreenActivityImages, setFullscreenActivityImages] = useState<string[]>([]);
   const [hoveredImageIndex, setHoveredImageIndex] = useState<{[key: string]: number | null}>({});
+  const savedScrollPosition = useRef<number>(0);
+  const isScrollLocked = useRef<boolean>(false);
+  const preventScrollHandler = useRef<((e: WheelEvent | TouchEvent) => void) | null>(null);
+  const preventWindowScrollHandler = useRef<(() => void) | null>(null);
+  const mouseMoveHandler = useRef<((e: MouseEvent) => void) | null>(null);
+  const mousePosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
   const nextSlide = (activityKey: string, totalImages: number) => {
     setCurrentSlide(prev => ({
@@ -47,30 +53,79 @@ export default function AboutSection() {
     }));
   };
 
+  // Calculate duration between start date and present (using 19th of each month)
+  const calculateDuration = (startMonth: string, startYear: number): string => {
+    const now = new Date();
+    const currentDay = now.getDate();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    
+    // If today is before the 19th, use previous month's 19th
+    // If today is on or after the 19th, use current month's 19th
+    let endYear = currentYear;
+    let endMonth = currentMonth;
+    
+    if (currentDay < 19) {
+      // Use previous month's 19th
+      if (currentMonth === 0) {
+        endMonth = 11;
+        endYear = currentYear - 1;
+      } else {
+        endMonth = currentMonth - 1;
+      }
+    }
+    
+    const endDate = new Date(endYear, endMonth, 19);
+    const startDate = new Date(startYear, getMonthIndex(startMonth), 19);
+    
+    // Calculate years and months
+    let years = endDate.getFullYear() - startDate.getFullYear();
+    let months = endDate.getMonth() - startDate.getMonth();
+    
+    // Adjust if months are negative
+    if (months < 0) {
+      years--;
+      months += 12;
+    }
+    
+    // Format duration string
+    const yearsText = years > 0 ? `${years} ${years === 1 ? 'yr' : 'yrs'}` : '';
+    const monthsText = months > 0 ? `${months} ${months === 1 ? 'mo' : 'mos'}` : '';
+    const duration = [yearsText, monthsText].filter(Boolean).join(' ');
+    
+    return duration;
+  };
+
+  // Get month index from month name
+  const getMonthIndex = (monthName: string): number => {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return months.findIndex(m => m.toLowerCase() === monthName.toLowerCase());
+  };
+
   const workExperience: WorkExperience[] = [
     {
-      title: "Freelance Web Developer",
+      title: "Freelance",
       company: "Various Clients",
       period: "Jan 2025 - Present",
       description: [
-        "Develop web applications using React and Java for diverse client needs",
+        "Develop web applications using React and Java tailored to client requirements.",
         // "Provide online tutoring and programming training sessions",
-        "Offer IT consulting services for various technology projects",
-        "Create and maintain WordPress websites and custom solutions"
+        "Provide IT consulting services across diverse technology projects.",
+        "Build and maintain WordPress websites and custom web solutions.",
+        "Support clients with data entry and digital content management tasks."
       ]
     },
     {
       title: "Web Developer",
       company: "WebriQ",
-      period: "Jun 2023 - Present · 2 yrs 5 mos",
+      period: `Jun 2023 - Present · ${calculateDuration("Jun", 2023)}`,
       description: [
-        "Developed and led website and application projects using JavaScript, TypeScript, React, and modern frameworks",
-        "Led B2B web application development and contributed to eCommerce platforms and booking systems, delivering end-to-end solutions",
-        "Integrated APIs and third-party services (including Ecwid and Medusa) to enhance platform functionality",
-        "Worked with PostgreSQL for reliable data management and full-stack development",
-        "Applied UI/UX principles to create user-friendly solutions aligned with business needs",
-        "Implemented SEO best practices to improve visibility, search ranking, and site performance",
-        "Created and maintained documentation to support smooth development and team collaboration"
+        "Developed AI Agents and led full-stack web projects using JavaScript, TypeScript, and React.",
+        "Built and maintained B2B applications, eCommerce, and booking platforms with modern frameworks.",
+        "Integrated APIs and third-party services such as Swell and Medusa to extend functionality.",
+        "Utilized PostgreSQL for efficient data handling and backend development.",
+        "Applied UI/UX and SEO best practices to enhance usability, visibility, and performance.",
+        "Prepared documentation to streamline development and collaboration."
       ],
       logo: "/images/project-section/website.png" // Using website image as placeholder for WebriQ logo
     }
@@ -173,6 +228,205 @@ export default function AboutSection() {
     }
   };
 
+  // Prevent body scrolling when modal or fullscreen is open
+  useEffect(() => {
+    const isOverlayOpen = isModalOpen || isFullscreenOpen;
+    
+    // Track mouse position
+    const trackMouseMove = (e: MouseEvent) => {
+      mousePosition.current = { x: e.clientX, y: e.clientY };
+    };
+    
+    // Prevent scroll on background
+    const preventScroll = (e: WheelEvent | TouchEvent) => {
+      // Allow scrolling within modal content
+      const target = e.target as HTMLElement;
+      const modalContent = target.closest('.modal-content');
+      
+      // Get element at mouse position
+      const elementAtPoint = document.elementFromPoint(
+        e instanceof WheelEvent ? e.clientX : (e as TouchEvent).touches[0]?.clientX || 0,
+        e instanceof WheelEvent ? e.clientY : (e as TouchEvent).touches[0]?.clientY || 0
+      );
+      const elementAtPointModalContent = elementAtPoint?.closest('.modal-content');
+      
+      // Log scroll event details
+      console.log('=== SCROLL EVENT DETECTED ===');
+      console.log('Event type:', e.type);
+      console.log('Mouse position:', e instanceof WheelEvent ? { x: e.clientX, y: e.clientY } : 'N/A');
+      console.log('Target element:', target);
+      console.log('Target tag:', target?.tagName);
+      console.log('Target class:', target?.className);
+      console.log('Element at mouse point:', elementAtPoint);
+      console.log('Element at point tag:', elementAtPoint?.tagName);
+      console.log('Element at point class:', elementAtPoint?.className);
+      console.log('Modal content found (from target):', !!modalContent);
+      console.log('Modal content found (from mouse point):', !!elementAtPointModalContent);
+      if (modalContent) {
+        console.log('Modal content element:', modalContent);
+        console.log('Modal content scrollTop:', (modalContent as HTMLElement).scrollTop);
+        console.log('Modal content scrollHeight:', (modalContent as HTMLElement).scrollHeight);
+        console.log('Modal content clientHeight:', (modalContent as HTMLElement).clientHeight);
+        const rect = (modalContent as HTMLElement).getBoundingClientRect();
+        console.log('Modal content position:', { top: rect.top, left: rect.left, width: rect.width, height: rect.height });
+      }
+      if (e instanceof WheelEvent) {
+        console.log('Wheel deltaY:', e.deltaY);
+        console.log('Wheel deltaX:', e.deltaX);
+        console.log('Window scrollY:', window.scrollY);
+        console.log('Document body scrollTop:', document.body.scrollTop);
+        console.log('Document documentElement scrollTop:', document.documentElement.scrollTop);
+      }
+      console.log('Current window scroll position:', window.scrollY);
+      console.log('Saved scroll position:', savedScrollPosition.current);
+      console.log('===========================');
+      
+      // Always prevent window/body scrolling when modal is open
+      // But allow modal content to scroll
+      if (modalContent || elementAtPointModalContent) {
+        const contentElement = (modalContent || elementAtPointModalContent) as HTMLElement;
+        console.log('✅ SCROLL WITHIN MODAL - Handling modal content scroll');
+        
+        if (e instanceof WheelEvent) {
+          // Check if modal content can scroll in this direction
+          const { scrollTop, scrollHeight, clientHeight } = contentElement;
+          const canScrollDown = scrollTop + clientHeight < scrollHeight - 1;
+          const canScrollUp = scrollTop > 0;
+          
+          console.log('Modal scroll state:', {
+            scrollTop,
+            scrollHeight,
+            clientHeight,
+            canScrollDown,
+            canScrollUp,
+            deltaY: e.deltaY
+          });
+          
+          // If modal content can scroll in this direction, allow it and prevent window scroll
+          if ((e.deltaY > 0 && canScrollDown) || (e.deltaY < 0 && canScrollUp)) {
+            console.log('✅ Allowing modal content to scroll');
+            // Prevent window scroll but allow modal content scroll
+            e.preventDefault();
+            e.stopPropagation();
+            // Manually scroll the modal content with smooth behavior
+            const scrollAmount = e.deltaY;
+            const newScrollTop = Math.max(0, Math.min(
+              scrollHeight - clientHeight,
+              scrollTop + scrollAmount
+            ));
+            contentElement.scrollTo({
+              top: newScrollTop,
+              behavior: 'auto' // Use 'auto' for immediate response, or 'smooth' for smooth scrolling
+            });
+          } else {
+            console.log('❌ Modal content at boundary - blocking all scroll');
+            // At boundary, prevent all scrolling
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+          }
+        } else {
+          // For touch events, prevent default to stop window scroll
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      } else {
+        console.log('❌ BLOCKING SCROLL - Not within modal content');
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        return false;
+      }
+    };
+    
+    if (isOverlayOpen && !isScrollLocked.current) {
+      // Save current scroll position
+      savedScrollPosition.current = window.scrollY;
+      
+      // Disable body and html scrolling
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${savedScrollPosition.current}px`;
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      
+      // Store handler in ref for cleanup
+      preventScrollHandler.current = preventScroll;
+      
+      // Prevent window scroll
+      const preventWindowScroll = () => {
+        console.log('🚫 WINDOW SCROLL EVENT DETECTED');
+        console.log('Current window.scrollY:', window.scrollY);
+        console.log('Saved scroll position:', savedScrollPosition.current);
+        console.log('Attempting to restore scroll position...');
+        
+        // Check if scroll position changed
+        if (Math.abs(window.scrollY - savedScrollPosition.current) > 1) {
+          console.log('⚠️ WARNING: Background scroll detected! Restoring position...');
+          window.scrollTo(0, savedScrollPosition.current);
+        }
+      };
+      preventWindowScrollHandler.current = preventWindowScroll;
+      
+      // Track mouse movements
+      mouseMoveHandler.current = trackMouseMove;
+      document.addEventListener('mousemove', trackMouseMove);
+      
+      // Prevent wheel and touch events from scrolling background
+      document.addEventListener('wheel', preventScroll, { passive: false, capture: true });
+      document.addEventListener('touchmove', preventScroll, { passive: false, capture: true });
+      window.addEventListener('scroll', preventWindowScroll, { passive: false });
+      
+      isScrollLocked.current = true;
+    } else if (!isOverlayOpen && isScrollLocked.current) {
+      // Remove event listeners using stored handler
+      if (preventScrollHandler.current) {
+        document.removeEventListener('wheel', preventScrollHandler.current, { capture: true } as EventListenerOptions);
+        document.removeEventListener('touchmove', preventScrollHandler.current, { capture: true } as EventListenerOptions);
+        preventScrollHandler.current = null;
+      }
+      if (preventWindowScrollHandler.current) {
+        window.removeEventListener('scroll', preventWindowScrollHandler.current);
+        preventWindowScrollHandler.current = null;
+      }
+      if (mouseMoveHandler.current) {
+        document.removeEventListener('mousemove', mouseMoveHandler.current);
+        mouseMoveHandler.current = null;
+      }
+      
+      // Restore scrolling when both overlays are closed
+      const scrollY = savedScrollPosition.current;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+      
+      // Restore scroll position
+      window.scrollTo(0, scrollY);
+      
+      isScrollLocked.current = false;
+      savedScrollPosition.current = 0;
+    }
+    
+    // Cleanup function
+    return () => {
+      if (preventScrollHandler.current) {
+        document.removeEventListener('wheel', preventScrollHandler.current, { capture: true } as EventListenerOptions);
+        document.removeEventListener('touchmove', preventScrollHandler.current, { capture: true } as EventListenerOptions);
+        preventScrollHandler.current = null;
+      }
+      if (preventWindowScrollHandler.current) {
+        window.removeEventListener('scroll', preventWindowScrollHandler.current);
+        preventWindowScrollHandler.current = null;
+      }
+      if (mouseMoveHandler.current) {
+        document.removeEventListener('mousemove', mouseMoveHandler.current);
+        mouseMoveHandler.current = null;
+      }
+    };
+  }, [isModalOpen, isFullscreenOpen]);
+
   return (
     <>
       <section
@@ -234,7 +488,7 @@ export default function AboutSection() {
 
               <div className="max-w-sm md:max-w-lg lg:max-w-xl mx-auto md:mx-0">
                 <p className="text-sm md:text-md  xl:text-lg text-white mb-4 md:mb-6 font-text text-left">
-                  I&apos;m a full-stack web developer with almost 3 years of experience crafting
+                  I&apos;m a full-stack web developer crafting
                   websites and web apps using Next.js, React, JavaScript, Java,
                   WordPress, and modern design tools. I handle both design and
                   development — turning ideas into polished digital experiences.
@@ -269,7 +523,7 @@ export default function AboutSection() {
           className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4"
           onClick={handleModalClick}
         >
-          <div className="relative max-w-4xl max-h-[90vh] overflow-y-auto bg-gray-900 rounded-lg">
+          <div className="modal-content relative max-w-4xl max-h-[90vh] overflow-y-auto bg-gray-900 rounded-lg">
             {/* Close button */}
             <button
               onClick={closeModal}
