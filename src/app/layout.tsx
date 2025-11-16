@@ -42,8 +42,16 @@ export const metadata: Metadata = {
     creator: "@marielgenodiala",
   },
   icons: {
-    icon: "/images/mg-logo.png",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/images/mg-logo.png", type: "image/png", sizes: "32x32" },
+      { url: "/images/mg-logo.png", type: "image/png", sizes: "192x192" },
+    ],
     apple: "/images/mg-logo.png",
+    shortcut: "/favicon.ico",
+  },
+  verification: {
+    google: "google7cd52fb18a60e719",
   },
   other: {
     "og:image:width": "1200",
