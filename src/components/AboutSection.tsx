@@ -26,6 +26,7 @@ interface PersonalActivity {
 }
 
 export default function AboutSection() {
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState<{[key: string]: number}>({});
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
@@ -34,10 +35,10 @@ export default function AboutSection() {
   const [hoveredImageIndex, setHoveredImageIndex] = useState<{[key: string]: number | null}>({});
   const savedScrollPosition = useRef<number>(0);
   const isScrollLocked = useRef<boolean>(false);
-  const preventScrollHandler = useRef<((e: WheelEvent | TouchEvent) => void) | null>(null);
-  const preventWindowScrollHandler = useRef<(() => void) | null>(null);
-  const mouseMoveHandler = useRef<((e: MouseEvent) => void) | null>(null);
-  const mousePosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const scrollHandlerRef = useRef<(() => void) | null>(null);
+  const wheelHandlerRef = useRef<((e: WheelEvent) => void) | null>(null);
+  const isModalOpenRef = useRef<boolean>(false);
+  const isFullscreenOpenRef = useRef<boolean>(false);
 
   const nextSlide = (activityKey: string, totalImages: number) => {
     setCurrentSlide(prev => ({
@@ -228,204 +229,323 @@ export default function AboutSection() {
     }
   };
 
-  // Prevent body scrolling when modal or fullscreen is open
+
+  // Handler ref to prevent window scroll - will be updated in effects
+  const preventWindowScrollRef = useRef<() => void>(() => {
+    const overlayOpen = isModalOpenRef.current || isFullscreenOpenRef.current;
+    if (overlayOpen && savedScrollPosition.current !== undefined) {
+      // Force scroll position back to saved position
+      if (Math.abs(window.scrollY - savedScrollPosition.current) > 1) {
+        window.scrollTo(0, savedScrollPosition.current);
+      }
+    }
+  });
+
+  // Separate effect for MODAL
   useEffect(() => {
-    const isOverlayOpen = isModalOpen || isFullscreenOpen;
+    isModalOpenRef.current = isModalOpen;
     
-    // Track mouse position
-    const trackMouseMove = (e: MouseEvent) => {
-      mousePosition.current = { x: e.clientX, y: e.clientY };
-    };
-    
-    // Prevent scroll on background
-    const preventScroll = (e: WheelEvent | TouchEvent) => {
-      // Allow scrolling within modal content
-      const target = e.target as HTMLElement;
-      const modalContent = target.closest('.modal-content');
-      
-      // Get element at mouse position
-      const elementAtPoint = document.elementFromPoint(
-        e instanceof WheelEvent ? e.clientX : (e as TouchEvent).touches[0]?.clientX || 0,
-        e instanceof WheelEvent ? e.clientY : (e as TouchEvent).touches[0]?.clientY || 0
-      );
-      const elementAtPointModalContent = elementAtPoint?.closest('.modal-content');
-      
-      // Log scroll event details
-      console.log('=== SCROLL EVENT DETECTED ===');
-      console.log('Event type:', e.type);
-      console.log('Mouse position:', e instanceof WheelEvent ? { x: e.clientX, y: e.clientY } : 'N/A');
-      console.log('Target element:', target);
-      console.log('Target tag:', target?.tagName);
-      console.log('Target class:', target?.className);
-      console.log('Element at mouse point:', elementAtPoint);
-      console.log('Element at point tag:', elementAtPoint?.tagName);
-      console.log('Element at point class:', elementAtPoint?.className);
-      console.log('Modal content found (from target):', !!modalContent);
-      console.log('Modal content found (from mouse point):', !!elementAtPointModalContent);
-      if (modalContent) {
-        console.log('Modal content element:', modalContent);
-        console.log('Modal content scrollTop:', (modalContent as HTMLElement).scrollTop);
-        console.log('Modal content scrollHeight:', (modalContent as HTMLElement).scrollHeight);
-        console.log('Modal content clientHeight:', (modalContent as HTMLElement).clientHeight);
-        const rect = (modalContent as HTMLElement).getBoundingClientRect();
-        console.log('Modal content position:', { top: rect.top, left: rect.left, width: rect.width, height: rect.height });
+    if (isModalOpen) {
+      // Save scroll position when modal opens (if not already saved)
+      if (!isScrollLocked.current) {
+        savedScrollPosition.current = window.scrollY;
       }
-      if (e instanceof WheelEvent) {
-        console.log('Wheel deltaY:', e.deltaY);
-        console.log('Wheel deltaX:', e.deltaX);
-        console.log('Window scrollY:', window.scrollY);
-        console.log('Document body scrollTop:', document.body.scrollTop);
-        console.log('Document documentElement scrollTop:', document.documentElement.scrollTop);
-      }
-      console.log('Current window scroll position:', window.scrollY);
-      console.log('Saved scroll position:', savedScrollPosition.current);
-      console.log('===========================');
       
-      // Always prevent window/body scrolling when modal is open
-      // But allow modal content to scroll
-      if (modalContent || elementAtPointModalContent) {
-        const contentElement = (modalContent || elementAtPointModalContent) as HTMLElement;
-        console.log('✅ SCROLL WITHIN MODAL - Handling modal content scroll');
-        
-        if (e instanceof WheelEvent) {
-          // Check if modal content can scroll in this direction
-          const { scrollTop, scrollHeight, clientHeight } = contentElement;
-          const canScrollDown = scrollTop + clientHeight < scrollHeight - 1;
-          const canScrollUp = scrollTop > 0;
-          
-          console.log('Modal scroll state:', {
-            scrollTop,
-            scrollHeight,
-            clientHeight,
-            canScrollDown,
-            canScrollUp,
-            deltaY: e.deltaY
-          });
-          
-          // If modal content can scroll in this direction, allow it and prevent window scroll
-          if ((e.deltaY > 0 && canScrollDown) || (e.deltaY < 0 && canScrollUp)) {
-            console.log('✅ Allowing modal content to scroll');
-            // Prevent window scroll but allow modal content scroll
-            e.preventDefault();
-            e.stopPropagation();
-            // Manually scroll the modal content with smooth behavior
-            const scrollAmount = e.deltaY;
-            const newScrollTop = Math.max(0, Math.min(
-              scrollHeight - clientHeight,
-              scrollTop + scrollAmount
-            ));
-            contentElement.scrollTo({
-              top: newScrollTop,
-              behavior: 'auto' // Use 'auto' for immediate response, or 'smooth' for smooth scrolling
-            });
-          } else {
-            console.log('❌ Modal content at boundary - blocking all scroll');
-            // At boundary, prevent all scrolling
-            e.preventDefault();
-            e.stopPropagation();
-            e.stopImmediatePropagation();
-          }
-        } else {
-          // For touch events, prevent default to stop window scroll
-          e.preventDefault();
-          e.stopPropagation();
-        }
-      } else {
-        console.log('❌ BLOCKING SCROLL - Not within modal content');
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        return false;
-      }
-    };
-    
-    if (isOverlayOpen && !isScrollLocked.current) {
-      // Save current scroll position
-      savedScrollPosition.current = window.scrollY;
-      
-      // Disable body and html scrolling
+      // ALWAYS apply body lock when modal is open
       document.body.style.position = 'fixed';
       document.body.style.top = `-${savedScrollPosition.current}px`;
       document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
       
-      // Store handler in ref for cleanup
-      preventScrollHandler.current = preventScroll;
-      
-      // Prevent window scroll
-      const preventWindowScroll = () => {
-        console.log('🚫 WINDOW SCROLL EVENT DETECTED');
-        console.log('Current window.scrollY:', window.scrollY);
-        console.log('Saved scroll position:', savedScrollPosition.current);
-        console.log('Attempting to restore scroll position...');
+      // Wheel event handler to prevent background scrolling
+      const handleWheel = (e: WheelEvent) => {
+        // ALWAYS prevent default to block background scrolling
+        e.preventDefault();
+        e.stopPropagation();
         
-        // Check if scroll position changed
-        if (Math.abs(window.scrollY - savedScrollPosition.current) > 1) {
-          console.log('⚠️ WARNING: Background scroll detected! Restoring position...');
+        const target = e.target as HTMLElement;
+        // Check if we're inside the modal overlay
+        const modalOverlay = target.closest('[class*="fixed inset-0"]') as HTMLElement;
+        
+        // If we're in the modal overlay, find and scroll the modal content
+        if (modalOverlay) {
+          // Find the modal content element within the overlay
+          const modalContent = modalOverlay.querySelector('.modal-content') as HTMLElement;
+          
+          if (modalContent) {
+            const { scrollTop, scrollHeight, clientHeight } = modalContent;
+            const isAtTop = scrollTop === 0;
+            const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
+            const isScrollable = scrollHeight > clientHeight;
+            
+            // If content is scrollable and not at boundary, manually scroll it
+            if (isScrollable) {
+              if (e.deltaY > 0 && !isAtBottom) {
+                // Scroll down
+                modalContent.scrollTop += e.deltaY;
+              } else if (e.deltaY < 0 && !isAtTop) {
+                // Scroll up
+                modalContent.scrollTop += e.deltaY;
+              }
+              // If at boundary, do nothing (already prevented default)
+            }
+            // If not scrollable, do nothing (already prevented default)
+          }
+        }
+        // If not in modal overlay, do nothing (already prevented default)
+      };
+      
+      // Scroll handler - ALWAYS force position back when overlay is open
+      preventWindowScrollRef.current = () => {
+        const overlayOpen = isModalOpenRef.current || isFullscreenOpenRef.current;
+        if (overlayOpen && savedScrollPosition.current !== undefined) {
+          // Force scroll position back immediately
           window.scrollTo(0, savedScrollPosition.current);
         }
       };
-      preventWindowScrollHandler.current = preventWindowScroll;
       
-      // Track mouse movements
-      mouseMoveHandler.current = trackMouseMove;
-      document.addEventListener('mousemove', trackMouseMove);
+      // Remove old handlers
+      if (scrollHandlerRef.current) {
+        window.removeEventListener('scroll', scrollHandlerRef.current);
+      }
+      if (wheelHandlerRef.current) {
+        document.removeEventListener('wheel', wheelHandlerRef.current, { capture: true } as EventListenerOptions);
+      }
       
-      // Prevent wheel and touch events from scrolling background
-      document.addEventListener('wheel', preventScroll, { passive: false, capture: true });
-      document.addEventListener('touchmove', preventScroll, { passive: false, capture: true });
-      window.addEventListener('scroll', preventWindowScroll, { passive: false });
+      // Add new handlers
+      scrollHandlerRef.current = preventWindowScrollRef.current;
+      wheelHandlerRef.current = handleWheel;
+      window.addEventListener('scroll', preventWindowScrollRef.current, { passive: false });
+      document.addEventListener('wheel', handleWheel, { passive: false, capture: true });
       
       isScrollLocked.current = true;
-    } else if (!isOverlayOpen && isScrollLocked.current) {
-      // Remove event listeners using stored handler
-      if (preventScrollHandler.current) {
-        document.removeEventListener('wheel', preventScrollHandler.current, { capture: true } as EventListenerOptions);
-        document.removeEventListener('touchmove', preventScrollHandler.current, { capture: true } as EventListenerOptions);
-        preventScrollHandler.current = null;
+    } else {
+      // Only restore if fullscreen is also closed
+      if (!isFullscreenOpen && isScrollLocked.current) {
+        if (scrollHandlerRef.current) {
+          window.removeEventListener('scroll', scrollHandlerRef.current);
+          scrollHandlerRef.current = null;
+        }
+        if (wheelHandlerRef.current) {
+          document.removeEventListener('wheel', wheelHandlerRef.current, { capture: true } as EventListenerOptions);
+          wheelHandlerRef.current = null;
+        }
+        
+        const scrollY = savedScrollPosition.current;
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+        window.scrollTo(0, scrollY);
+        
+        isScrollLocked.current = false;
+        savedScrollPosition.current = 0;
       }
-      if (preventWindowScrollHandler.current) {
-        window.removeEventListener('scroll', preventWindowScrollHandler.current);
-        preventWindowScrollHandler.current = null;
-      }
-      if (mouseMoveHandler.current) {
-        document.removeEventListener('mousemove', mouseMoveHandler.current);
-        mouseMoveHandler.current = null;
-      }
-      
-      // Restore scrolling when both overlays are closed
-      const scrollY = savedScrollPosition.current;
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-      document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
-      
-      // Restore scroll position
-      window.scrollTo(0, scrollY);
-      
-      isScrollLocked.current = false;
-      savedScrollPosition.current = 0;
     }
     
-    // Cleanup function
     return () => {
-      if (preventScrollHandler.current) {
-        document.removeEventListener('wheel', preventScrollHandler.current, { capture: true } as EventListenerOptions);
-        document.removeEventListener('touchmove', preventScrollHandler.current, { capture: true } as EventListenerOptions);
-        preventScrollHandler.current = null;
-      }
-      if (preventWindowScrollHandler.current) {
-        window.removeEventListener('scroll', preventWindowScrollHandler.current);
-        preventWindowScrollHandler.current = null;
-      }
-      if (mouseMoveHandler.current) {
-        document.removeEventListener('mousemove', mouseMoveHandler.current);
-        mouseMoveHandler.current = null;
+      // Don't clean up if fullscreen is still open
+      if (!isFullscreenOpenRef.current && isScrollLocked.current) {
+        if (scrollHandlerRef.current) {
+          window.removeEventListener('scroll', scrollHandlerRef.current);
+          scrollHandlerRef.current = null;
+        }
+        if (wheelHandlerRef.current) {
+          document.removeEventListener('wheel', wheelHandlerRef.current, { capture: true } as EventListenerOptions);
+          wheelHandlerRef.current = null;
+        }
       }
     };
   }, [isModalOpen, isFullscreenOpen]);
+
+  // Separate effect for FULLSCREEN
+  useEffect(() => {
+    isFullscreenOpenRef.current = isFullscreenOpen;
+    
+    if (isFullscreenOpen) {
+      // Save scroll position when fullscreen opens (if not already saved)
+      if (!isScrollLocked.current) {
+        savedScrollPosition.current = window.scrollY;
+      }
+      
+      // ALWAYS apply body lock when fullscreen is open
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${savedScrollPosition.current}px`;
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      
+      // Wheel event handler to prevent background scrolling
+      const handleWheel = (e: WheelEvent) => {
+        // ALWAYS prevent default to block background scrolling
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const target = e.target as HTMLElement;
+        // Check if we're inside the modal overlay (not fullscreen)
+        const modalOverlay = target.closest('[class*="fixed inset-0"]') as HTMLElement;
+        const fullscreenContent = target.closest('[class*="fullscreen"]') as HTMLElement;
+        
+        // If we're in the modal overlay (and not in fullscreen), find and scroll the modal content
+        if (modalOverlay && !fullscreenContent) {
+          // Find the modal content element within the overlay
+          const modalContent = modalOverlay.querySelector('.modal-content') as HTMLElement;
+          
+          if (modalContent) {
+            const { scrollTop, scrollHeight, clientHeight } = modalContent;
+            const isAtTop = scrollTop === 0;
+            const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
+            const isScrollable = scrollHeight > clientHeight;
+            
+            // If content is scrollable and not at boundary, manually scroll it
+            if (isScrollable) {
+              if (e.deltaY > 0 && !isAtBottom) {
+                modalContent.scrollTop += e.deltaY;
+              } else if (e.deltaY < 0 && !isAtTop) {
+                modalContent.scrollTop += e.deltaY;
+              }
+            }
+          }
+        }
+        // Fullscreen content (images) don't need scrolling, so we just prevent all scrolling
+      };
+      
+      // Scroll handler - ALWAYS force position back when overlay is open
+      preventWindowScrollRef.current = () => {
+        const overlayOpen = isModalOpenRef.current || isFullscreenOpenRef.current;
+        if (overlayOpen && savedScrollPosition.current !== undefined) {
+          // Force scroll position back immediately
+          window.scrollTo(0, savedScrollPosition.current);
+        }
+      };
+      
+      // Remove old handlers
+      if (scrollHandlerRef.current) {
+        window.removeEventListener('scroll', scrollHandlerRef.current);
+      }
+      if (wheelHandlerRef.current) {
+        document.removeEventListener('wheel', wheelHandlerRef.current, { capture: true } as EventListenerOptions);
+      }
+      
+      // Add new handlers
+      scrollHandlerRef.current = preventWindowScrollRef.current;
+      wheelHandlerRef.current = handleWheel;
+      window.addEventListener('scroll', preventWindowScrollRef.current, { passive: false });
+      document.addEventListener('wheel', handleWheel, { passive: false, capture: true });
+      
+      isScrollLocked.current = true;
+    } else {
+      // Only restore if modal is also closed
+      if (!isModalOpen && isScrollLocked.current) {
+        if (scrollHandlerRef.current) {
+          window.removeEventListener('scroll', scrollHandlerRef.current);
+          scrollHandlerRef.current = null;
+        }
+        if (wheelHandlerRef.current) {
+          document.removeEventListener('wheel', wheelHandlerRef.current, { capture: true } as EventListenerOptions);
+          wheelHandlerRef.current = null;
+        }
+        
+        const scrollY = savedScrollPosition.current;
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+        window.scrollTo(0, scrollY);
+        
+        isScrollLocked.current = false;
+        savedScrollPosition.current = 0;
+      } else if (isModalOpen) {
+        // Re-apply body styles to ensure they're maintained (using refs to check state)
+        const modalStillOpen = isModalOpenRef.current;
+        if (modalStillOpen) {
+          document.body.style.position = 'fixed';
+          document.body.style.top = `-${savedScrollPosition.current}px`;
+          document.body.style.width = '100%';
+          document.body.style.overflow = 'hidden';
+          document.documentElement.style.overflow = 'hidden';
+          
+          // Wheel event handler to prevent background scrolling
+          const handleWheel = (e: WheelEvent) => {
+            // ALWAYS prevent default to block background scrolling
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const target = e.target as HTMLElement;
+            // Check if we're inside the modal overlay
+            const modalOverlay = target.closest('[class*="fixed inset-0"]') as HTMLElement;
+            
+            // If we're in the modal overlay, find and scroll the modal content
+            if (modalOverlay) {
+              // Find the modal content element within the overlay
+              const modalContent = modalOverlay.querySelector('.modal-content') as HTMLElement;
+              
+              if (modalContent) {
+                const { scrollTop, scrollHeight, clientHeight } = modalContent;
+                const isAtTop = scrollTop === 0;
+                const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
+                const isScrollable = scrollHeight > clientHeight;
+                
+                // If content is scrollable and not at boundary, manually scroll it
+                if (isScrollable) {
+                  if (e.deltaY > 0 && !isAtBottom) {
+                    // Scroll down
+                    modalContent.scrollTop += e.deltaY;
+                  } else if (e.deltaY < 0 && !isAtTop) {
+                    // Scroll up
+                    modalContent.scrollTop += e.deltaY;
+                  }
+                  // If at boundary, do nothing (already prevented default)
+                }
+                // If not scrollable, do nothing (already prevented default)
+              }
+            }
+            // If not in modal overlay, do nothing (already prevented default)
+          };
+          
+          // Scroll handler - ALWAYS force position back when overlay is open
+          preventWindowScrollRef.current = () => {
+            const overlayOpen = isModalOpenRef.current || isFullscreenOpenRef.current;
+            if (overlayOpen && savedScrollPosition.current !== undefined) {
+              // Force scroll position back immediately
+              window.scrollTo(0, savedScrollPosition.current);
+            }
+          };
+          
+          // Remove old handlers
+          if (scrollHandlerRef.current) {
+            window.removeEventListener('scroll', scrollHandlerRef.current);
+          }
+          if (wheelHandlerRef.current) {
+            document.removeEventListener('wheel', wheelHandlerRef.current, { capture: true } as EventListenerOptions);
+          }
+          
+          // Add new handlers
+          scrollHandlerRef.current = preventWindowScrollRef.current;
+          wheelHandlerRef.current = handleWheel;
+          window.addEventListener('scroll', preventWindowScrollRef.current, { passive: false });
+          document.addEventListener('wheel', handleWheel, { passive: false, capture: true });
+        }
+      }
+    }
+    
+    return () => {
+      // Don't clean up if modal is still open
+      if (!isModalOpenRef.current && isScrollLocked.current) {
+        if (scrollHandlerRef.current) {
+          window.removeEventListener('scroll', scrollHandlerRef.current);
+          scrollHandlerRef.current = null;
+        }
+        if (wheelHandlerRef.current) {
+          document.removeEventListener('wheel', wheelHandlerRef.current, { capture: true } as EventListenerOptions);
+          wheelHandlerRef.current = null;
+        }
+      }
+    };
+  }, [isFullscreenOpen, isModalOpen]);
 
   return (
     <>
@@ -523,11 +643,14 @@ export default function AboutSection() {
           className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4"
           onClick={handleModalClick}
         >
-          <div className="modal-content relative max-w-4xl max-h-[90vh] overflow-y-auto bg-gray-900 rounded-lg">
+          <div className="modal-content relative max-w-4xl max-h-[90vh] overflow-y-auto bg-gray-900 rounded-lg z-50">
             {/* Close button */}
             <button
-              onClick={closeModal}
-              className="absolute top-4 right-4  text-white hover:text-dim-gray p-2 rounded-lg  transition-colors z-10"
+              onClick={(e) => {
+                e.stopPropagation();
+                closeModal();
+              }}
+              className="absolute top-4 right-4 text-white hover:text-dim-gray p-2 rounded-lg transition-colors z-50"
               title="Close"
             >
               ×
@@ -613,7 +736,9 @@ export default function AboutSection() {
                                     className="aspect-square rounded-lg overflow-hidden relative group cursor-pointer"
                                     onMouseEnter={() => setHoveredImageIndex(prev => ({ ...prev, [imageKey]: imgIndex }))}
                                     onMouseLeave={() => setHoveredImageIndex(prev => ({ ...prev, [imageKey]: null }))}
-                                    onClick={() => openFullscreen(activity.images, actualImageIndex)}
+                                    onClick={() => {
+                                      openFullscreen(activity.images, actualImageIndex);
+                                    }}
                                   >
                                     <Image
                                       src={image}
@@ -686,7 +811,10 @@ export default function AboutSection() {
         >
           {/* Close button */}
           <button
-            onClick={closeFullscreen}
+            onClick={(e) => {
+              e.stopPropagation();
+              closeFullscreen();
+            }}
             className="absolute top-4 right-4 text-white hover:text-dim-gray p-2 rounded-lg transition-colors z-10"
             title="Close"
           >

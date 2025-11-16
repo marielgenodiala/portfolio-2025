@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Heading } from "@/ui";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { GoDownload } from "react-icons/go";
 import { CiZoomIn } from "react-icons/ci";
 import { Reveal } from "react-awesome-reveal";
@@ -18,6 +18,11 @@ export default function ProjectsSection() {
   const [activeTab, setActiveTab] = useState("Team Projects");
   const [selectedImage, setSelectedImage] = useState<DesignProject | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const savedScrollPosition = useRef<number>(0);
+  const isScrollLocked = useRef<boolean>(false);
+  const scrollHandlerRef = useRef<(() => void) | null>(null);
+  const wheelHandlerRef = useRef<((e: WheelEvent) => void) | null>(null);
 
   const tabs = ["Team Projects", "Work", "Design"];
 
@@ -123,6 +128,122 @@ export default function ProjectsSection() {
     setIsModalOpen(false);
     setSelectedImage(null);
   };
+
+  const handleModalClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      closeModal();
+    }
+  };
+
+  // Scroll lock effect for modal
+  useEffect(() => {
+    if (isModalOpen) {
+      // Save scroll position when modal opens
+      if (!isScrollLocked.current) {
+        savedScrollPosition.current = window.scrollY;
+      }
+
+      // Apply body lock
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${savedScrollPosition.current}px`;
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+
+      // Wheel event handler to prevent background scrolling
+      const handleWheel = (e: WheelEvent) => {
+        // ALWAYS prevent default to block background scrolling
+        e.preventDefault();
+        e.stopPropagation();
+
+        const target = e.target as HTMLElement;
+        // Check if we're inside the modal overlay
+        const modalOverlay = target.closest('[class*="fixed inset-0"]') as HTMLElement;
+
+        // If we're in the modal overlay, allow modal content to scroll if needed
+        if (modalOverlay) {
+          // Find any scrollable content within the modal
+          const scrollableContent = modalOverlay.querySelector('[class*="max-h"]') as HTMLElement;
+          
+          if (scrollableContent) {
+            const { scrollTop, scrollHeight, clientHeight } = scrollableContent;
+            const isAtTop = scrollTop === 0;
+            const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
+            const isScrollable = scrollHeight > clientHeight;
+
+            // If content is scrollable and not at boundary, manually scroll it
+            if (isScrollable) {
+              if (e.deltaY > 0 && !isAtBottom) {
+                scrollableContent.scrollTop += e.deltaY;
+              } else if (e.deltaY < 0 && !isAtTop) {
+                scrollableContent.scrollTop += e.deltaY;
+              }
+            }
+          }
+        }
+      };
+
+      // Scroll handler - ALWAYS force position back when modal is open
+      const preventWindowScroll = () => {
+        if (savedScrollPosition.current !== undefined) {
+          window.scrollTo(0, savedScrollPosition.current);
+        }
+      };
+
+      // Remove old handlers
+      if (scrollHandlerRef.current) {
+        window.removeEventListener('scroll', scrollHandlerRef.current);
+      }
+      if (wheelHandlerRef.current) {
+        document.removeEventListener('wheel', wheelHandlerRef.current, { capture: true } as EventListenerOptions);
+      }
+
+      // Add new handlers
+      scrollHandlerRef.current = preventWindowScroll;
+      wheelHandlerRef.current = handleWheel;
+      window.addEventListener('scroll', preventWindowScroll, { passive: false });
+      document.addEventListener('wheel', handleWheel, { passive: false, capture: true });
+
+      isScrollLocked.current = true;
+    } else {
+      // Restore scroll when modal closes
+      if (isScrollLocked.current) {
+        if (scrollHandlerRef.current) {
+          window.removeEventListener('scroll', scrollHandlerRef.current);
+          scrollHandlerRef.current = null;
+        }
+        if (wheelHandlerRef.current) {
+          document.removeEventListener('wheel', wheelHandlerRef.current, { capture: true } as EventListenerOptions);
+          wheelHandlerRef.current = null;
+        }
+
+        const scrollY = savedScrollPosition.current;
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+        window.scrollTo(0, scrollY);
+
+        isScrollLocked.current = false;
+        savedScrollPosition.current = 0;
+      }
+    }
+
+    return () => {
+      // Cleanup on unmount
+      if (isScrollLocked.current) {
+        if (scrollHandlerRef.current) {
+          window.removeEventListener('scroll', scrollHandlerRef.current);
+          scrollHandlerRef.current = null;
+        }
+        if (wheelHandlerRef.current) {
+          document.removeEventListener('wheel', wheelHandlerRef.current, { capture: true } as EventListenerOptions);
+          wheelHandlerRef.current = null;
+        }
+      }
+    };
+  }, [isModalOpen]);
 
   return (
     <section
@@ -299,26 +420,38 @@ export default function ProjectsSection() {
 
       {/* Image Modal */}
       {isModalOpen && selectedImage && (
-        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4"
+          onClick={handleModalClick}
+        >
           <div className="relative max-w-7xl max-h-full">
             {/* Action buttons in upper right */}
             <div className="absolute top-4 right-4 flex gap-2 z-10">
               <button
-                onClick={handleDownload}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDownload();
+                }}
                 className="bg-transparent border border-white text-white hover:text-dim-gray p-2 rounded-lg hover:bg-gray-200 transition-colors"
                 title="Download"
               >
                 <GoDownload size={20} />
               </button>
               <button
-                onClick={() => window.open(selectedImage.image, '_blank')}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.open(selectedImage.image, '_blank');
+                }}
                 className="bg-transparent border border-white text-white hover:text-dim-gray p-2 rounded-lg hover:bg-gray-200 transition-colors"
                 title="Zoom"
               >
                 <CiZoomIn size={20} />
               </button>
               <button
-                onClick={closeModal}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  closeModal();
+                }}
                 className="bg-transparent border border-white text-white hover:text-dim-gray p-2 rounded-lg hover:bg-gray-200 transition-colors"
                 title="Close"
               >
@@ -327,7 +460,7 @@ export default function ProjectsSection() {
             </div>
             
             {/* Image */}
-            <div className="relative">
+            <div className="relative" onClick={(e) => e.stopPropagation()}>
               <Image
                 src={selectedImage.image}
                 alt={selectedImage.title}
