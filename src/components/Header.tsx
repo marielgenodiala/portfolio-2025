@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { CgMenuRightAlt } from "react-icons/cg";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { IoClose } from "react-icons/io5";
 
