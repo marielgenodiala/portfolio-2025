@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { Heading } from "@/ui";
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { GoDownload } from "react-icons/go";
 import { CiZoomIn } from "react-icons/ci";
 import { Reveal } from "react-awesome-reveal";
@@ -18,6 +19,7 @@ export default function ProjectsSection() {
   const [activeTab, setActiveTab] = useState("Team Projects");
   const [selectedImage, setSelectedImage] = useState<DesignProject | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const savedScrollPosition = useRef<number>(0);
   const isScrollLocked = useRef<boolean>(false);
@@ -129,11 +131,22 @@ export default function ProjectsSection() {
     setSelectedImage(null);
   };
 
-  const handleModalClick = (e: React.MouseEvent) => {
+  const handleModalClick = (e: React.MouseEvent | React.TouchEvent) => {
     if (e.target === e.currentTarget) {
       closeModal();
     }
   };
+
+  // Handle touch events for iOS
+  const handleModalTouchStart = (e: React.TouchEvent) => {
+    // Prevent touch events from propagating to background
+    e.stopPropagation();
+  };
+
+  // Ensure component is mounted before rendering portal
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Scroll lock effect for modal
   useEffect(() => {
@@ -249,6 +262,7 @@ export default function ProjectsSection() {
     <section
       id="projects"
       className="min-h-screen flex justify-center items-center px-4 pt-28 md:pt-36 2xl:pt-28 pb-20 2xl:pb-12 snap-section"
+      style={{ paddingBottom: 'max(5rem, calc(5rem + env(safe-area-inset-bottom)))' }}
     >
       <div className="mx-auto px-12 max-w-[350px] md:max-w-[800px] lg:max-w-6xl xl:max-w-7xl">
         <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>
@@ -418,19 +432,50 @@ export default function ProjectsSection() {
         </Reveal>
       </div>
 
-      {/* Image Modal */}
-      {isModalOpen && selectedImage && (
+      {/* Image Modal - Using Portal for iOS compatibility */}
+      {mounted && isModalOpen && selectedImage && createPortal(
         <div 
-          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[9999] p-4"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 9999,
+            WebkitOverflowScrolling: 'touch',
+            touchAction: 'none',
+            WebkitTransform: 'translateZ(0)',
+            transform: 'translateZ(0)',
+            willChange: 'transform',
+            // Ensure modal covers safe areas on iOS
+            paddingTop: 'env(safe-area-inset-top)',
+            paddingBottom: 'env(safe-area-inset-bottom)',
+            paddingLeft: 'env(safe-area-inset-left)',
+            paddingRight: 'env(safe-area-inset-right)'
+          }}
           onClick={handleModalClick}
+          onTouchStart={handleModalTouchStart}
         >
-          <div className="relative max-w-7xl max-h-full">
+          <div 
+            className="relative max-w-7xl max-h-full"
+            style={{
+              zIndex: 10000,
+              WebkitTransform: 'translateZ(0)',
+              transform: 'translateZ(0)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+          >
             {/* Action buttons in upper right */}
-            <div className="absolute top-4 right-4 flex gap-2 z-10">
+            <div className="absolute top-4 right-4 flex gap-2 z-[10001]" style={{ zIndex: 10001 }}>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   handleDownload();
+                }}
+                onTouchStart={(e) => {
+                  e.stopPropagation();
                 }}
                 className="bg-transparent border border-white text-white hover:text-dim-gray p-2 rounded-lg hover:bg-gray-200 transition-colors"
                 title="Download"
@@ -442,6 +487,9 @@ export default function ProjectsSection() {
                   e.stopPropagation();
                   window.open(selectedImage.image, '_blank');
                 }}
+                onTouchStart={(e) => {
+                  e.stopPropagation();
+                }}
                 className="bg-transparent border border-white text-white hover:text-dim-gray p-2 rounded-lg hover:bg-gray-200 transition-colors"
                 title="Zoom"
               >
@@ -452,6 +500,9 @@ export default function ProjectsSection() {
                   e.stopPropagation();
                   closeModal();
                 }}
+                onTouchStart={(e) => {
+                  e.stopPropagation();
+                }}
                 className="bg-transparent border border-white text-white hover:text-dim-gray p-2 rounded-lg hover:bg-gray-200 transition-colors"
                 title="Close"
               >
@@ -460,7 +511,7 @@ export default function ProjectsSection() {
             </div>
             
             {/* Image */}
-            <div className="relative" onClick={(e) => e.stopPropagation()}>
+            <div className="relative" onClick={(e) => e.stopPropagation()} onTouchStart={(e) => e.stopPropagation()}>
               <Image
                 src={selectedImage.image}
                 alt={selectedImage.title}
@@ -470,7 +521,8 @@ export default function ProjectsSection() {
               />
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </section>
   );

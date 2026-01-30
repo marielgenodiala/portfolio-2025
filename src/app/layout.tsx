@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import "./globals.css";
 import Header from "@/components/Header";
@@ -6,6 +6,13 @@ import FloatingElements from "@/components/FloatingElements";
 import { Poppins } from "next/font/google";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.marielgenodiala.com";
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: 'cover',
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

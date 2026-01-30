@@ -5,6 +5,7 @@ import { Heading } from "@/ui";
 import { Reveal } from "react-awesome-reveal";
 import { fadeInUp } from "@/components/common/animations";
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { IoLogoFacebook } from "react-icons/io5";
 import { AiFillInstagram } from "react-icons/ai";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
@@ -33,6 +34,7 @@ export default function AboutSection() {
   const [fullscreenImageIndex, setFullscreenImageIndex] = useState(0);
   const [fullscreenActivityImages, setFullscreenActivityImages] = useState<string[]>([]);
   const [hoveredImageIndex, setHoveredImageIndex] = useState<{[key: string]: number | null}>({});
+  const [mounted, setMounted] = useState(false);
   const savedScrollPosition = useRef<number>(0);
   const isScrollLocked = useRef<boolean>(false);
   const scrollHandlerRef = useRef<(() => void) | null>(null);
@@ -174,11 +176,22 @@ export default function AboutSection() {
     setIsModalOpen(false);
   };
 
-  const handleModalClick = (e: React.MouseEvent) => {
+  const handleModalClick = (e: React.MouseEvent | React.TouchEvent) => {
     if (e.target === e.currentTarget) {
       closeModal();
     }
   };
+
+  // Handle touch events for iOS
+  const handleModalTouchStart = (e: React.TouchEvent) => {
+    // Prevent touch events from propagating to background
+    e.stopPropagation();
+  };
+
+  // Ensure component is mounted before rendering portal
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleGetConnected = () => {
     closeModal();
@@ -552,6 +565,7 @@ export default function AboutSection() {
       <section
         id="about-me"
         className="min-h-screen flex justify-center items-center px-4 pt-36 pb-20 snap-section"
+        style={{ paddingBottom: 'max(5rem, calc(5rem + env(safe-area-inset-bottom)))' }}
       >
         <div className="mx-auto px-10 md:px-12  max-w-[330px] md:max-w-7xl grid lg:grid-cols-2 gap-8 md:gap-12 items-center w-full">
           <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>
@@ -637,20 +651,54 @@ export default function AboutSection() {
         </div>
       </section>
 
-      {/* Modal */}
-      {isModalOpen && (
+      {/* Modal - Using Portal for iOS compatibility */}
+      {mounted && isModalOpen && createPortal(
         <div 
-          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[9999] p-4"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 9999,
+            WebkitOverflowScrolling: 'touch',
+            touchAction: 'none',
+            WebkitTransform: 'translateZ(0)',
+            transform: 'translateZ(0)',
+            willChange: 'transform',
+            // Ensure modal covers safe areas on iOS
+            paddingTop: 'env(safe-area-inset-top)',
+            paddingBottom: 'env(safe-area-inset-bottom)',
+            paddingLeft: 'env(safe-area-inset-left)',
+            paddingRight: 'env(safe-area-inset-right)'
+          }}
           onClick={handleModalClick}
+          onTouchStart={handleModalTouchStart}
         >
-          <div className="modal-content relative max-w-4xl max-h-[90vh] overflow-y-auto bg-gray-900 rounded-lg z-50">
+          <div 
+            className="modal-content relative max-w-4xl max-h-[90vh] overflow-y-auto bg-gray-900 rounded-lg"
+            style={{
+              zIndex: 10000,
+              WebkitOverflowScrolling: 'touch',
+              touchAction: 'pan-y',
+              WebkitTransform: 'translateZ(0)',
+              transform: 'translateZ(0)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+          >
             {/* Close button */}
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 closeModal();
               }}
-              className="absolute top-4 right-4 text-white hover:text-dim-gray p-2 rounded-lg transition-colors z-50"
+              onTouchStart={(e) => {
+                e.stopPropagation();
+              }}
+              className="absolute top-4 right-4 text-white hover:text-dim-gray p-2 rounded-lg transition-colors z-[10001]"
+              style={{ zIndex: 10001 }}
               title="Close"
             >
               ×
@@ -800,14 +848,38 @@ export default function AboutSection() {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
-      {/* Fullscreen Image Viewer */}
-      {isFullscreenOpen && fullscreenActivityImages.length > 0 && (
+      {/* Fullscreen Image Viewer - Using Portal for iOS compatibility */}
+      {mounted && isFullscreenOpen && fullscreenActivityImages.length > 0 && createPortal(
         <div 
-          className="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-[60]"
+          className="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-[10000]"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 10000,
+            WebkitOverflowScrolling: 'touch',
+            touchAction: 'none',
+            WebkitTransform: 'translateZ(0)',
+            transform: 'translateZ(0)',
+            willChange: 'transform',
+            // Ensure modal covers safe areas on iOS
+            paddingTop: 'env(safe-area-inset-top)',
+            paddingBottom: 'env(safe-area-inset-bottom)',
+            paddingLeft: 'env(safe-area-inset-left)',
+            paddingRight: 'env(safe-area-inset-right)'
+          }}
           onClick={handleFullscreenClick}
+          onTouchStart={(e) => {
+            if (e.target === e.currentTarget) {
+              closeFullscreen();
+            }
+          }}
         >
           {/* Close button */}
           <button
@@ -867,7 +939,8 @@ export default function AboutSection() {
               </div>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

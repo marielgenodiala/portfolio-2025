@@ -113,6 +113,7 @@ export default function TestimonialsSection() {
     <section
       id="testimonials"
       className="min-h-screen flex justify-center items-center px-4 pt-28 md:pt-36 pb-20 snap-section"
+      style={{ paddingBottom: 'max(5rem, calc(5rem + env(safe-area-inset-bottom)))' }}
     >
       <div className="mx-auto md:px-12 max-w-7xl">
         <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>
