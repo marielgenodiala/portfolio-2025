@@ -162,38 +162,33 @@ export default function ProjectsSection() {
       document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
+      // Add modal-open class for CSS fallback
+      document.body.classList.add('modal-open');
 
       // Wheel event handler to prevent background scrolling
       const handleWheel = (e: WheelEvent) => {
-        // ALWAYS prevent default to block background scrolling
+        const target = e.target as HTMLElement;
+        // Check if we're inside the modal content (allow scrolling there)
+        const modalContent = target.closest('[class*="relative max-w"]') as HTMLElement;
+        
+        if (modalContent && modalContent.style.overflowY === 'auto') {
+          // Allow native scrolling in modal content - don't prevent default
+          const { scrollTop, scrollHeight, clientHeight } = modalContent;
+          const isAtTop = scrollTop === 0;
+          const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
+          
+          // Only prevent if at boundary and trying to scroll further
+          if ((isAtTop && e.deltaY < 0) || (isAtBottom && e.deltaY > 0)) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+          // Otherwise allow native scrolling
+          return;
+        }
+        
+        // If not in modal content, prevent background scrolling
         e.preventDefault();
         e.stopPropagation();
-
-        const target = e.target as HTMLElement;
-        // Check if we're inside the modal overlay
-        const modalOverlay = target.closest('[class*="fixed inset-0"]') as HTMLElement;
-
-        // If we're in the modal overlay, allow modal content to scroll if needed
-        if (modalOverlay) {
-          // Find any scrollable content within the modal
-          const scrollableContent = modalOverlay.querySelector('[class*="max-h"]') as HTMLElement;
-          
-          if (scrollableContent) {
-            const { scrollTop, scrollHeight, clientHeight } = scrollableContent;
-            const isAtTop = scrollTop === 0;
-            const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
-            const isScrollable = scrollHeight > clientHeight;
-
-            // If content is scrollable and not at boundary, manually scroll it
-            if (isScrollable) {
-              if (e.deltaY > 0 && !isAtBottom) {
-                scrollableContent.scrollTop += e.deltaY;
-              } else if (e.deltaY < 0 && !isAtTop) {
-                scrollableContent.scrollTop += e.deltaY;
-              }
-            }
-          }
-        }
       };
 
       // Scroll handler - ALWAYS force position back when modal is open
@@ -236,6 +231,8 @@ export default function ProjectsSection() {
         document.body.style.width = '';
         document.body.style.overflow = '';
         document.documentElement.style.overflow = '';
+        // Remove modal-open class for CSS fallback
+        document.body.classList.remove('modal-open');
         window.scrollTo(0, scrollY);
 
         isScrollLocked.current = false;
@@ -254,6 +251,8 @@ export default function ProjectsSection() {
           document.removeEventListener('wheel', wheelHandlerRef.current, { capture: true } as EventListenerOptions);
           wheelHandlerRef.current = null;
         }
+        // Remove modal-open class on cleanup
+        document.body.classList.remove('modal-open');
       }
     };
   }, [isModalOpen]);
@@ -262,7 +261,7 @@ export default function ProjectsSection() {
     <section
       id="projects"
       className="min-h-screen flex justify-center items-center px-4 pt-28 md:pt-36 2xl:pt-28 pb-20 2xl:pb-12 snap-section"
-      style={{ paddingBottom: 'max(5rem, calc(5rem + env(safe-area-inset-bottom)))' }}
+      style={{ paddingBottom: 'max(6rem, calc(6rem + env(safe-area-inset-bottom) + 2rem))' }}
     >
       <div className="mx-auto px-12 max-w-[350px] md:max-w-[800px] lg:max-w-6xl xl:max-w-7xl">
         <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>
@@ -434,38 +433,53 @@ export default function ProjectsSection() {
 
       {/* Image Modal - Using Portal for iOS compatibility */}
       {mounted && isModalOpen && selectedImage && createPortal(
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[9999] p-4"
+        <div
+          className="modal-overlay"
           style={{
             position: 'fixed',
+            inset: 0,
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            zIndex: 9999,
-            WebkitOverflowScrolling: 'touch',
-            touchAction: 'none',
-            WebkitTransform: 'translateZ(0)',
-            transform: 'translateZ(0)',
-            willChange: 'transform',
-            // Ensure modal covers safe areas on iOS
-            paddingTop: 'env(safe-area-inset-top)',
-            paddingBottom: 'env(safe-area-inset-bottom)',
-            paddingLeft: 'env(safe-area-inset-left)',
-            paddingRight: 'env(safe-area-inset-right)'
+            width: '100%',
+            height: '100%',
+            minHeight: '100dvh',
+            zIndex: 2147483647,
+            background: 'rgba(0, 0, 0, 0.9)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden',
+            padding: 0,
+            margin: 0
           }}
           onClick={handleModalClick}
           onTouchStart={handleModalTouchStart}
         >
-          <div 
-            className="relative max-w-7xl max-h-full"
+          <div
+            className="relative w-full mx-4 flex flex-col items-center justify-center"
             style={{
-              zIndex: 10000,
-              WebkitTransform: 'translateZ(0)',
-              transform: 'translateZ(0)'
+              position: 'relative',
+              zIndex: 1,
+              maxHeight: 'calc(100dvh - 2rem)',
+              maxWidth: 'min(80rem, calc(100vw - 2rem))', // 80rem = max-w-7xl, but respect viewport on mobile
+              height: 'auto',
+              overflowY: 'auto',
+              overflowX: 'hidden',
+              WebkitOverflowScrolling: 'touch',
+              touchAction: 'pan-y pinch-zoom',
+              marginTop: 'env(safe-area-inset-top)',
+              marginBottom: 'env(safe-area-inset-bottom)',
+              overscrollBehavior: 'contain'
             }}
             onClick={(e) => e.stopPropagation()}
-            onTouchStart={(e) => e.stopPropagation()}
+            onTouchStart={(e) => {
+              e.stopPropagation();
+            }}
+            onTouchMove={() => {
+              // Don't prevent default - allow native scrolling
+            }}
           >
             {/* Action buttons in upper right */}
             <div className="absolute top-4 right-4 flex gap-2 z-[10001]" style={{ zIndex: 10001 }}>
@@ -511,13 +525,13 @@ export default function ProjectsSection() {
             </div>
             
             {/* Image */}
-            <div className="relative" onClick={(e) => e.stopPropagation()} onTouchStart={(e) => e.stopPropagation()}>
+            <div className="relative flex items-center justify-center w-full" onClick={(e) => e.stopPropagation()} onTouchStart={(e) => e.stopPropagation()}>
               <Image
                 src={selectedImage.image}
                 alt={selectedImage.title}
                 width={1200}
                 height={800}
-                className="max-w-full max-h-[80vh] object-contain"
+                className="max-w-full max-h-[80vh] object-contain mx-auto"
               />
             </div>
           </div>

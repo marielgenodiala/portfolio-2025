@@ -43,7 +43,7 @@ export default function ServicesSection() {
     <section
       id="services"
       className="min-h-screen flex justify-center items-center px-4 pt-28 md:pt-36 pb-20 snap-section"
-      style={{ paddingBottom: 'max(5rem, calc(5rem + env(safe-area-inset-bottom)))' }}
+      style={{ paddingBottom: 'max(6rem, calc(6rem + env(safe-area-inset-bottom) + 2rem))' }}
     >
       <div className="mx-auto px-12 lg:max-w-[900px] xl:max-w-[1200px] 2xl:max-w-7xl">
         <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>

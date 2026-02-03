@@ -270,43 +270,33 @@ export default function AboutSection() {
       document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
+      // Add modal-open class for CSS fallback
+      document.body.classList.add('modal-open');
       
       // Wheel event handler to prevent background scrolling
       const handleWheel = (e: WheelEvent) => {
-        // ALWAYS prevent default to block background scrolling
+        const target = e.target as HTMLElement;
+        // Check if we're inside the modal content (allow scrolling there)
+        const modalContent = target.closest('.modal-content') as HTMLElement;
+        
+        if (modalContent) {
+          // Allow native scrolling in modal content - don't prevent default
+          const { scrollTop, scrollHeight, clientHeight } = modalContent;
+          const isAtTop = scrollTop === 0;
+          const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
+          
+          // Only prevent if at boundary and trying to scroll further
+          if ((isAtTop && e.deltaY < 0) || (isAtBottom && e.deltaY > 0)) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+          // Otherwise allow native scrolling
+          return;
+        }
+        
+        // If not in modal content, prevent background scrolling
         e.preventDefault();
         e.stopPropagation();
-        
-        const target = e.target as HTMLElement;
-        // Check if we're inside the modal overlay
-        const modalOverlay = target.closest('[class*="fixed inset-0"]') as HTMLElement;
-        
-        // If we're in the modal overlay, find and scroll the modal content
-        if (modalOverlay) {
-          // Find the modal content element within the overlay
-          const modalContent = modalOverlay.querySelector('.modal-content') as HTMLElement;
-          
-          if (modalContent) {
-            const { scrollTop, scrollHeight, clientHeight } = modalContent;
-            const isAtTop = scrollTop === 0;
-            const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
-            const isScrollable = scrollHeight > clientHeight;
-            
-            // If content is scrollable and not at boundary, manually scroll it
-            if (isScrollable) {
-              if (e.deltaY > 0 && !isAtBottom) {
-                // Scroll down
-                modalContent.scrollTop += e.deltaY;
-              } else if (e.deltaY < 0 && !isAtTop) {
-                // Scroll up
-                modalContent.scrollTop += e.deltaY;
-              }
-              // If at boundary, do nothing (already prevented default)
-            }
-            // If not scrollable, do nothing (already prevented default)
-          }
-        }
-        // If not in modal overlay, do nothing (already prevented default)
       };
       
       // Scroll handler - ALWAYS force position back when overlay is open
@@ -351,13 +341,15 @@ export default function AboutSection() {
         document.body.style.width = '';
         document.body.style.overflow = '';
         document.documentElement.style.overflow = '';
+        // Remove modal-open class for CSS fallback
+        document.body.classList.remove('modal-open');
         window.scrollTo(0, scrollY);
-        
+
         isScrollLocked.current = false;
         savedScrollPosition.current = 0;
       }
     }
-    
+
     return () => {
       // Don't clean up if fullscreen is still open
       if (!isFullscreenOpenRef.current && isScrollLocked.current) {
@@ -369,6 +361,8 @@ export default function AboutSection() {
           document.removeEventListener('wheel', wheelHandlerRef.current, { capture: true } as EventListenerOptions);
           wheelHandlerRef.current = null;
         }
+        // Remove modal-open class on cleanup
+        document.body.classList.remove('modal-open');
       }
     };
   }, [isModalOpen, isFullscreenOpen]);
@@ -389,7 +383,9 @@ export default function AboutSection() {
       document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
-      
+      // Add modal-open class for CSS fallback
+      document.body.classList.add('modal-open');
+
       // Wheel event handler to prevent background scrolling
       const handleWheel = (e: WheelEvent) => {
         // ALWAYS prevent default to block background scrolling
@@ -467,8 +463,10 @@ export default function AboutSection() {
         document.body.style.width = '';
         document.body.style.overflow = '';
         document.documentElement.style.overflow = '';
+        // Remove modal-open class for CSS fallback
+        document.body.classList.remove('modal-open');
         window.scrollTo(0, scrollY);
-        
+
         isScrollLocked.current = false;
         savedScrollPosition.current = 0;
       } else if (isModalOpen) {
@@ -556,6 +554,8 @@ export default function AboutSection() {
           document.removeEventListener('wheel', wheelHandlerRef.current, { capture: true } as EventListenerOptions);
           wheelHandlerRef.current = null;
         }
+        // Remove modal-open class on cleanup
+        document.body.classList.remove('modal-open');
       }
     };
   }, [isFullscreenOpen, isModalOpen]);
@@ -565,7 +565,7 @@ export default function AboutSection() {
       <section
         id="about-me"
         className="min-h-screen flex justify-center items-center px-4 pt-36 pb-20 snap-section"
-        style={{ paddingBottom: 'max(5rem, calc(5rem + env(safe-area-inset-bottom)))' }}
+        style={{ paddingBottom: 'max(6rem, calc(6rem + env(safe-area-inset-bottom) + 2rem))' }}
       >
         <div className="mx-auto px-10 md:px-12  max-w-[330px] md:max-w-7xl grid lg:grid-cols-2 gap-8 md:gap-12 items-center w-full">
           <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>
@@ -653,40 +653,54 @@ export default function AboutSection() {
 
       {/* Modal - Using Portal for iOS compatibility */}
       {mounted && isModalOpen && createPortal(
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[9999] p-4"
+        <div
+          className="modal-overlay"
           style={{
             position: 'fixed',
+            inset: 0,
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            zIndex: 9999,
-            WebkitOverflowScrolling: 'touch',
-            touchAction: 'none',
-            WebkitTransform: 'translateZ(0)',
-            transform: 'translateZ(0)',
-            willChange: 'transform',
-            // Ensure modal covers safe areas on iOS
-            paddingTop: 'env(safe-area-inset-top)',
-            paddingBottom: 'env(safe-area-inset-bottom)',
-            paddingLeft: 'env(safe-area-inset-left)',
-            paddingRight: 'env(safe-area-inset-right)'
+            width: '100%',
+            height: '100%',
+            minHeight: '100dvh',
+            zIndex: 2147483647,
+            background: 'rgba(0, 0, 0, 0.9)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden',
+            padding: 0,
+            margin: 0
           }}
           onClick={handleModalClick}
           onTouchStart={handleModalTouchStart}
         >
-          <div 
-            className="modal-content relative max-w-4xl max-h-[90vh] overflow-y-auto bg-gray-900 rounded-lg"
+          <div
+            className="modal-content relative w-full mx-4 bg-gray-900 rounded-lg"
             style={{
-              zIndex: 10000,
+              position: 'relative',
+              zIndex: 1,
+              maxHeight: 'calc(100dvh - 2rem)',
+              maxWidth: 'min(56rem, calc(100vw - 2rem))', // 56rem = max-w-4xl, but respect viewport on mobile
+              height: 'auto',
+              minHeight: '0',
+              overflowY: 'auto',
+              overflowX: 'hidden',
               WebkitOverflowScrolling: 'touch',
-              touchAction: 'pan-y',
-              WebkitTransform: 'translateZ(0)',
-              transform: 'translateZ(0)'
+              touchAction: 'pan-y pinch-zoom',
+              marginTop: 'env(safe-area-inset-top)',
+              marginBottom: 'env(safe-area-inset-bottom)',
+              overscrollBehavior: 'contain'
             }}
             onClick={(e) => e.stopPropagation()}
-            onTouchStart={(e) => e.stopPropagation()}
+            onTouchStart={(e) => {
+              e.stopPropagation();
+            }}
+            onTouchMove={() => {
+              // Don't prevent default - allow native scrolling
+            }}
           >
             {/* Close button */}
             <button
@@ -704,7 +718,7 @@ export default function AboutSection() {
               ×
             </button>
 
-            <div className="p-8">
+            <div className="p-4 sm:p-8" style={{ paddingTop: 'max(1.5rem, calc(1.5rem + env(safe-area-inset-top)))', paddingBottom: 'max(3rem, calc(3rem + env(safe-area-inset-bottom)))' }}>
               <Heading type="h2" variant="section" className="text-white mb-8 text-center leading-tight">
                 My Journey
               </Heading>
@@ -854,25 +868,26 @@ export default function AboutSection() {
 
       {/* Fullscreen Image Viewer - Using Portal for iOS compatibility */}
       {mounted && isFullscreenOpen && fullscreenActivityImages.length > 0 && createPortal(
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-[10000]"
+        <div
+          className="modal-overlay"
           style={{
             position: 'fixed',
+            inset: 0,
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            zIndex: 10000,
-            WebkitOverflowScrolling: 'touch',
-            touchAction: 'none',
-            WebkitTransform: 'translateZ(0)',
-            transform: 'translateZ(0)',
-            willChange: 'transform',
-            // Ensure modal covers safe areas on iOS
-            paddingTop: 'env(safe-area-inset-top)',
-            paddingBottom: 'env(safe-area-inset-bottom)',
-            paddingLeft: 'env(safe-area-inset-left)',
-            paddingRight: 'env(safe-area-inset-right)'
+            width: '100%',
+            height: '100%',
+            minHeight: '100dvh',
+            zIndex: 2147483647,
+            background: 'rgba(0, 0, 0, 0.95)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden',
+            padding: 0,
+            margin: 0
           }}
           onClick={handleFullscreenClick}
           onTouchStart={(e) => {
