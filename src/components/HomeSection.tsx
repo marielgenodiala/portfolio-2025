@@ -9,16 +9,16 @@ export default function HomeSection() {
   return (
       <section
         id="home"
-        className="snap-section-home flex items-center xl:px-8 relative overflow-visible"
+        className="snap-section-home flex items-center justify-center xl:px-8 relative overflow-visible min-h-screen"
       >
-      <div className="mx-auto px-1 md:px-5 lg:px-0 2xl:px-5 w-full h-full grid grid-cols-1 lg:grid-cols-2 gap-0">
+      <div className="mx-auto px-4 md:px-8 lg:px-0 2xl:px-5 w-full h-full grid grid-cols-1 lg:grid-cols-2 gap-0 items-center">
         {/* Left Side - Text Content */}
         <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>
-          <div className="flex flex-col justify-center items-center lg:pl-20 xl:pl-12 2xl:pl-0 lg:items-start text-center lg:text-left h-full pt-0 lg:pt-16">
+          <div className="flex flex-col justify-center items-center lg:pl-16 xl:pl-12 2xl:pl-0 lg:items-start text-center lg:text-left min-h-[60vh] lg:min-h-0 lg:h-full pt-0 lg:pt-16">
             <Heading
               type="h1"
               variant="hero"
-              className="mb-2 md:mb-3 lg:mb-8 text-[80px] md:text-[100px] lg:text-[65px] xl:!text-[85px] 2xl:!text-[100px] 3xl:!text-[120px] lg:mt-12 xl:mt-0"
+              className="mb-2 md:mb-4 lg:mb-8 text-[60px] sm:text-[70px] md:text-[85px] lg:text-[65px] xl:!text-[85px] 2xl:!text-[100px] 3xl:!text-[120px] lg:mt-12 xl:mt-0"
             >
               <span className="text-dim-gray">
                 {"Hi!".split("").map((char, index) => (
@@ -35,7 +35,7 @@ export default function HomeSection() {
             <Heading
               type="h2"
               variant="heroH2"
-              className="text-dim-gray mb-4 md:mb-5 lg:mb-12 text-[38px] md:!text-[60px] lg:!text-[45px] xl:!text-[58px] 2xl:!text-[80px] 3xl:!text-[110px] leading-none whitespace-nowrap"
+              className="text-dim-gray mb-4 md:mb-6 lg:mb-12 !text-[38px] sm:text-[38px] md:!text-[60px] lg:!text-[45px] xl:!text-[58px] 2xl:!text-[80px] 3xl:!text-[110px] leading-none whitespace-nowrap"
             >
               Web Developer
             </Heading>
