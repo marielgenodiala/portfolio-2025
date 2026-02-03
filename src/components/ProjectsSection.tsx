@@ -263,7 +263,7 @@ export default function ProjectsSection() {
       className="min-h-screen flex justify-center items-center px-4 pt-28 md:pt-36 2xl:pt-28 pb-20 2xl:pb-12 snap-section"
       style={{ paddingBottom: 'max(6rem, calc(6rem + env(safe-area-inset-bottom) + 2rem))' }}
     >
-      <div className="mx-auto px-12 max-w-[350px] md:max-w-[800px] lg:max-w-6xl xl:max-w-7xl">
+      <div className="mx-auto px-12 max-w-[350px] min-[650px]:max-w-[650px] md:max-w-[800px] lg:max-w-6xl xl:max-w-7xl">
         <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>
           <div className="text-center mb-16">
             <Heading type="h2" variant="section" className="text-white mb-6">
@@ -295,7 +295,7 @@ export default function ProjectsSection() {
         <div className="flex justify-center min-h-[450px] items-center">
           {/* Conditional Content Based on Active Tab */}
           {activeTab === "Team Projects" && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-3xl xl:max-w-4xl mx-auto w-full ">
+            <div className="grid grid-cols-1 min-[650px]:grid-cols-2 gap-8 max-w-3xl xl:max-w-4xl mx-auto w-full">
               {projects.map((project, index) => (
                 <Reveal keyframes={fadeInUp} duration={2000} triggerOnce key={index} delay={index * 200}>
                   <div

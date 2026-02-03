@@ -87,7 +87,7 @@ export default function SkillsSection() {
             </Heading>
           </div>
         </Reveal>
-        <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-7 gap-8 lg:gap-y-5 lg:gap-x-20">
+        <div className="grid grid-cols-3 min-[650px]:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-8 lg:gap-y-5 lg:gap-x-20">
           {skills.map((logo, index) => (
             <Reveal keyframes={fadeInUp} duration={2000} triggerOnce key={index} delay={index * 100}>
               <div className="flex flex-col items-center justify-center group cursor-pointer">

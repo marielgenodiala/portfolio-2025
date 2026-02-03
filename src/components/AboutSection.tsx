@@ -567,10 +567,10 @@ export default function AboutSection() {
         className="min-h-screen flex justify-center items-center px-4 pt-36 pb-20 snap-section"
         style={{ paddingBottom: 'max(6rem, calc(6rem + env(safe-area-inset-bottom) + 2rem))' }}
       >
-        <div className="mx-auto px-10 md:px-12  max-w-[330px] md:max-w-7xl grid lg:grid-cols-2 gap-8 md:gap-12 items-center w-full">
+        <div className="mx-auto px-10 md:px-12 max-w-[330px] min-[650px]:max-w-xl md:max-w-2xl lg:max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center w-full">
           <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>
-            <div className="flex justify-center  ">
-              <div className="relative w-[250px] h-[300px] md:w-[300px] md:h-[375px] lg:w-[350px] lg:h-[437px] xl:w-[400px] xl:h-[500px]">
+            <div className="flex justify-center">
+              <div className="relative w-[250px] h-[300px] min-[650px]:w-[280px] min-[650px]:h-[350px] md:w-[300px] md:h-[375px] lg:w-[350px] lg:h-[437px] xl:w-[400px] xl:h-[500px]">
               
                 <div className="absolute top-3 right-2 md:top-4 md:right-4 xl:top-5 xl:right-5 w-full h-full border-[2px] md:border-[3px] border-van-dyke rounded-sm pointer-events-none z-0"></div>
 
@@ -589,29 +589,29 @@ export default function AboutSection() {
             </div>
           </Reveal>
           <Reveal keyframes={fadeInUp} duration={2000} triggerOnce delay={200}>
-            <div className="md:ml-20 lg:ml-0">
+            <div className="flex flex-col items-center lg:items-start">
               <Heading
                 type="h2"
                 variant="section"
-                className="text-white mb-6 text-[32px] md:text-[42px] lg:text-[50px] xl:text-[60px] font-poppins text-left "
+                className="text-white mb-6 text-[32px] md:text-[42px] lg:text-[50px] xl:text-[60px] font-poppins text-center lg:text-left"
               >
                 About Me
               </Heading>
-              
+
               {/* Social Media Links */}
-              <div className="flex gap-2 mb-6 md:mb-8 justify-start">
-                <a 
-                  href="https://www.facebook.com/mariel.genodiala.2024/" 
-                  target="_blank" 
+              <div className="flex gap-2 mb-6 md:mb-8 justify-center lg:justify-start">
+                <a
+                  href="https://www.facebook.com/mariel.genodiala.2024/"
+                  target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Visit Mariel Genodiala's Facebook profile"
                   className="text-white hover:text-dim-gray transition-colors"
                 >
                   <IoLogoFacebook size={24} />
                 </a>
-                <a 
-                  href="https://www.instagram.com/sup_itsmariel/" 
-                  target="_blank" 
+                <a
+                  href="https://www.instagram.com/sup_itsmariel/"
+                  target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Visit Mariel Genodiala's Instagram profile"
                   className="text-white hover:text-dim-gray transition-colors"
@@ -620,25 +620,25 @@ export default function AboutSection() {
                 </a>
               </div>
 
-              <div className="max-w-sm md:max-w-lg lg:max-w-xl mx-auto md:mx-0">
-                <p className="text-sm md:text-md  xl:text-lg text-white mb-4 md:mb-6 font-text text-left">
+              <div className="max-w-sm min-[650px]:max-w-lg md:max-w-xl lg:max-w-xl">
+                <p className="text-sm md:text-md xl:text-lg text-white mb-4 md:mb-6 font-text text-center lg:text-left">
                   I&apos;m a full-stack web developer crafting
                   websites and web apps using Next.js, React, JavaScript, Java,
                   WordPress, and modern design tools. I handle both design and
                   development — turning ideas into polished digital experiences.
                 </p>
-                <p className="text-sm md:text-md  xl:text-lg text-white mb-6 md:mb-8 font-text text-left">
+                <p className="text-sm md:text-md xl:text-lg text-white mb-6 md:mb-8 font-text text-center lg:text-left">
                   I&apos;m also part of the public organization JavascriptCebu and actively
                   volunteer at tech events. When I&apos;m not coding, you&apos;ll find me exploring
                   new adventures, playing badminton, or capturing moments through photography.
                 </p>
-                <p className="text-sm md:text-md  xl:text-lg text-white mb-6 md:mb-8 font-bold text-left">
+                <p className="text-sm md:text-md xl:text-lg text-white mb-6 md:mb-8 font-bold text-center lg:text-left">
                   Build. Have Fun. Repeat.
                 </p>
               </div>
 
-              <div className="flex justify-start">
-                <button 
+              <div className="flex justify-center lg:justify-start">
+                <button
                   onClick={openModal}
                   aria-label="Learn more about Mariel Genodiala"
                   className="rounded-full bg-gunmetal text-white py-2 md:py-3 px-6 md:px-8 text-sm md:text-base font-button hover:bg-dim-gray transition-colors"

@@ -57,7 +57,7 @@ export default function ServicesSection() {
             </Heading>
           </div>
         </Reveal>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12">
+        <div className="grid min-[650px]:grid-cols-2 lg:grid-cols-3 gap-12">
           {services.map((service, index) => (
             <Reveal keyframes={fadeInUp} duration={2000} triggerOnce key={index} delay={index * 200}>
               <div className="group max-w-sm">
