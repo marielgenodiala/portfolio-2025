@@ -50,20 +50,23 @@ export default function Header() {
   }, [isMenuOpen]);
 
   const scrollToSection = (sectionId: string) => {
-    // If on thank-you page, navigate to root first, then add hash
+    const sections = ['home', 'about-me', 'projects', 'skills', 'services', 'testimonials', 'contact'];
+    const sectionIndex = sections.indexOf(sectionId);
+
+    // Determine the URL to use - no hash for home, hash for other sections
+    const targetUrl = sectionId === 'home' ? '/' : `/#${sectionId}`;
+
+    // If on thank-you page, navigate to root first, then scroll
     if (pathname === '/thank-you') {
-      router.push(`/#${sectionId}`);
+      router.push(targetUrl);
       // Wait for navigation, then scroll
       setTimeout(() => {
-        const sections = ['home', 'about-me', 'projects', 'skills', 'services', 'testimonials', 'contact'];
-        const sectionIndex = sections.indexOf(sectionId);
-        
         if (sectionIndex !== -1) {
           const snapContainer = document.querySelector('.snap-container') as HTMLElement;
           if (snapContainer) {
             const sectionWidth = window.innerWidth;
             const targetScrollLeft = sectionIndex * sectionWidth;
-            
+
             // Use instant scroll (no animation) for menu navigation
             snapContainer.scrollTo({
               left: targetScrollLeft,
@@ -73,19 +76,20 @@ export default function Header() {
         }
       }, 100);
     } else {
-      // Update URL with hash
-      router.push(`#${sectionId}`);
+      // Update URL - use replaceState for home to remove hash, push for others
+      if (sectionId === 'home') {
+        window.history.replaceState(null, '', '/');
+      } else {
+        window.history.pushState(null, '', `#${sectionId}`);
+      }
 
       // Navigate horizontally to section with instant scroll (no animation)
-      const sections = ['home', 'about-me', 'projects', 'skills', 'services', 'testimonials', 'contact'];
-      const sectionIndex = sections.indexOf(sectionId);
-      
       if (sectionIndex !== -1) {
         const snapContainer = document.querySelector('.snap-container') as HTMLElement;
         if (snapContainer) {
           const sectionWidth = window.innerWidth;
           const targetScrollLeft = sectionIndex * sectionWidth;
-          
+
           // Use instant scroll (no animation) for menu navigation
           snapContainer.scrollTo({
             left: targetScrollLeft,
@@ -98,9 +102,9 @@ export default function Header() {
   };
 
   const handleLogoClick = () => {
-    // Navigate to root and scroll to home section
+    // Navigate to root and scroll to home section (no hash for home)
     if (pathname === '/thank-you') {
-      router.push('/#home');
+      router.push('/');
       setTimeout(() => {
         const snapContainer = document.querySelector('.snap-container') as HTMLElement;
         if (snapContainer) {
@@ -111,7 +115,8 @@ export default function Header() {
         }
       }, 100);
     } else {
-      router.push('/#home');
+      // Remove any hash and go to clean root URL
+      window.history.replaceState(null, '', '/');
       const snapContainer = document.querySelector('.snap-container') as HTMLElement;
       if (snapContainer) {
         snapContainer.scrollTo({

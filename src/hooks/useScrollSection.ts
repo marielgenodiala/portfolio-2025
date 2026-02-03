@@ -14,19 +14,46 @@ const sections = [
 
 export function useScrollSection() {
   const [currentSection, setCurrentSection] = useState(1);
+  const lastUrlUpdateRef = useRef<string>('');
 
   useEffect(() => {
     const snapContainer = document.querySelector('.snap-container') as HTMLElement;
     if (!snapContainer) return;
 
+    // Update URL based on current section
+    const updateUrl = (sectionIndex: number) => {
+      const sectionName = sections[sectionIndex];
+      const newUrl = sectionName === 'home' ? '/' : `/#${sectionName}`;
+
+      // Only update if URL actually changed
+      if (lastUrlUpdateRef.current !== newUrl) {
+        lastUrlUpdateRef.current = newUrl;
+        if (sectionName === 'home') {
+          // Remove hash for home
+          if (window.location.hash) {
+            window.history.replaceState(null, '', '/');
+          }
+        } else {
+          // Add hash for other sections
+          if (window.location.hash !== `#${sectionName}`) {
+            window.history.replaceState(null, '', `#${sectionName}`);
+          }
+        }
+      }
+    };
+
     // Handle horizontal scroll to detect current section
     const handleHorizontalScroll = () => {
       const scrollLeft = snapContainer.scrollLeft;
       const sectionWidth = window.innerWidth;
-      
+
       // Calculate which section is currently visible
       const sectionIndex = Math.round(scrollLeft / sectionWidth);
       const newSection = Math.max(1, Math.min(sections.length, sectionIndex + 1));
+
+      // Update URL when section changes
+      const clampedIndex = Math.max(0, Math.min(sections.length - 1, sectionIndex));
+      updateUrl(clampedIndex);
 
       setCurrentSection((prevSection) => {
         if (prevSection !== newSection) {

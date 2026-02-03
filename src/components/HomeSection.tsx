@@ -14,7 +14,7 @@ export default function HomeSection() {
       <div className="mx-auto px-1 md:px-5 lg:px-0 2xl:px-5 w-full h-full grid grid-cols-1 lg:grid-cols-2 gap-0">
         {/* Left Side - Text Content */}
         <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>
-          <div className="flex flex-col justify-center items-center lg:pl-20 xl:pl-0 lg:items-start text-center lg:text-left h-full pt-0 lg:pt-16">
+          <div className="flex flex-col justify-center items-center lg:pl-20 xl:pl-12 2xl:pl-0 lg:items-start text-center lg:text-left h-full pt-0 lg:pt-16">
             <Heading
               type="h1"
               variant="hero"
@@ -35,7 +35,7 @@ export default function HomeSection() {
             <Heading
               type="h2"
               variant="heroH2"
-              className="text-dim-gray mb-4 md:mb-5 lg:mb-12 text-[50px] md:!text-[80px] lg:!text-[50px] xl:!text-[58px] 2xl:!text-[80px]  3xl:!text-[110px]  leading-none"
+              className="text-dim-gray mb-4 md:mb-5 lg:mb-12 text-[38px] md:!text-[60px] lg:!text-[45px] xl:!text-[58px] 2xl:!text-[80px] 3xl:!text-[110px] leading-none whitespace-nowrap"
             >
               Web Developer
             </Heading>
@@ -51,15 +51,15 @@ export default function HomeSection() {
         {/* Right Side - Image */}
         {/* Hidden on md and smaller screens, visible on lg and above */}
         <div className="hidden lg:flex relative w-full h-full items-end justify-end">
-          <div className="relative w-full h-[100%] max-h-full md:h-[100%] lg:h-[80%] lg:max-h-none xl:h-[82%] 2xl:h-[89%]">
+          <div className="relative w-full h-full max-h-[calc(100vh-7rem)]">
             <Image
               src="/images/Hero Image.png"
               alt="Mariel - Web Developer"
               fill
-              className="object-cover object-bottom"
+              className="object-contain object-bottom"
               priority
               quality={100}
-              sizes="100vw"
+              sizes="(min-width: 1024px) 50vw, 100vw"
               unoptimized
             />
           </div>

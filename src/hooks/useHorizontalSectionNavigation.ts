@@ -126,11 +126,26 @@ export function useHorizontalSectionNavigation() {
       }
     };
 
-    // Update current section index on horizontal scroll
+    // Update current section index and URL on horizontal scroll
     const handleHorizontalScroll = () => {
       const newIndex = getCurrentSectionIndex();
       if (newIndex !== currentSectionIndexRef.current) {
         currentSectionIndexRef.current = newIndex;
+
+        // Update URL based on current section
+        const currentSection = sections[newIndex];
+        if (currentSection === 'home') {
+          // Remove hash for home section
+          if (window.location.hash) {
+            window.history.replaceState(null, '', window.location.pathname);
+          }
+        } else {
+          // Add hash for other sections
+          const newHash = `#${currentSection}`;
+          if (window.location.hash !== newHash) {
+            window.history.replaceState(null, '', newHash);
+          }
+        }
       }
     };
 
