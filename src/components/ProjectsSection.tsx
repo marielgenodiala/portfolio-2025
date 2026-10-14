@@ -63,6 +63,13 @@ export default function ProjectsSection() {
 
   const workProjects = [
     {
+      title: "Integration Platform Web Application",
+      role: "Lead Developer • Full Stack Developer",
+      description: "Lead the development of a customer-facing integration platform web application used by clients to connect and manage their systems and data in one place. Oversee architecture, implementation, and delivery while coordinating with clients and the development team.",
+      tools: [".NET", "C#", "Azure", "NestJS"],
+      image: "/images/project-section/integration-platform.svg",
+    },
+    {
       title: "AI Agent Integration",
       role: "Full-Stack Developer",
       description: "Developed an AI-powered chat support agent integrated into a website that handles specific customer queries. The system generates intelligent responses by analyzing data from connected APIs, providing accurate and context-aware support.",
@@ -260,18 +267,20 @@ export default function ProjectsSection() {
   return (
     <section
       id="projects"
-      className="min-h-screen flex justify-center items-center px-4 pt-28 md:pt-36 2xl:pt-28 pb-20 2xl:pb-12 snap-section"
-      style={{ paddingBottom: 'max(6rem, calc(6rem + env(safe-area-inset-bottom) + 2rem))' }}
+      className="min-h-screen flex justify-center items-center px-4 pt-28 md:pt-36 lg:pt-28 pb-[max(6rem,calc(6rem+env(safe-area-inset-bottom)+2rem))] lg:pb-8 snap-section"
     >
       <div className="mx-auto px-12 max-w-[350px] min-[650px]:max-w-[650px] md:max-w-[800px] lg:max-w-6xl xl:max-w-7xl">
+        {/* Sticky title + tabs. The negative margin/padding pair keeps the original layout
+            while letting the opaque block sit flush at the top once scrolled. */}
+        <div className="sticky top-0 z-30 bg-rich-black pb-4 -mt-28 pt-28 md:-mt-36 md:pt-36 lg:-mt-28 lg:pt-28">
         <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>
-          <div className="text-center mb-16">
+          <div className="text-center">
             <Heading type="h2" variant="section" className="text-white mb-6">
               Projects
             </Heading>
             
             {/* Tabs */}
-            <div className="flex justify-center mb-12">
+            <div className="flex justify-center">
               <div className="flex gap-2">
                 {tabs.map((tab) => (
                   <button
@@ -290,9 +299,10 @@ export default function ProjectsSection() {
             </div>
           </div>
         </Reveal>
-        
+        </div>
+
         {/* Tab Content Container */}
-        <div className="flex justify-center min-h-[450px] items-center">
+        <div className="flex justify-center min-h-[450px] items-center mt-24 lg:mt-10">
           {/* Conditional Content Based on Active Tab */}
           {activeTab === "Team Projects" && (
             <div className="grid grid-cols-1 min-[650px]:grid-cols-2 gap-8 max-w-3xl xl:max-w-4xl mx-auto w-full">
@@ -420,7 +430,7 @@ export default function ProjectsSection() {
           )}
         </div>
         <Reveal keyframes={fadeInUp} duration={2000} triggerOnce delay={800}>
-          <div className="text-center mt-12">
+          <div className="text-center mt-12 lg:mt-8">
             <a 
               href="#contact"
               className="inline-block rounded-full bg-gunmetal text-white py-3 px-8 font-button hover:bg-dim-gray transition-colors"

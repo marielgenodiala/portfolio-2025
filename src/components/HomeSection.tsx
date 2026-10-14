@@ -14,7 +14,7 @@ export default function HomeSection() {
       <div className="mx-auto px-4 md:px-8 lg:px-0 2xl:px-5 w-full h-full grid grid-cols-1 lg:grid-cols-2 gap-0 items-center">
         {/* Left Side - Text Content */}
         <Reveal keyframes={fadeInUp} duration={2000} triggerOnce>
-          <div className="flex flex-col justify-center items-center lg:pl-16 xl:pl-12 2xl:pl-0 lg:items-start text-center lg:text-left min-h-[60vh] lg:min-h-0 lg:h-full pt-0 lg:pt-16">
+          <div className="flex flex-col justify-center items-center lg:pl-16 xl:pl-12 2xl:pl-0 lg:items-start text-center lg:text-left min-h-[60vh] lg:min-h-0 lg:h-full pt-0 lg:pb-24">
             <Heading
               type="h1"
               variant="hero"
@@ -37,7 +37,7 @@ export default function HomeSection() {
               variant="heroH2"
               className="text-dim-gray mb-4 md:mb-6 lg:mb-12 !text-[38px] sm:text-[38px] md:!text-[60px] lg:!text-[45px] xl:!text-[58px] 2xl:!text-[80px] 3xl:!text-[110px] leading-none whitespace-nowrap"
             >
-              Web Developer
+              Software Engineer
             </Heading>
             <a
               href="#contact"
@@ -54,7 +54,7 @@ export default function HomeSection() {
           <div className="relative w-full h-full max-h-[calc(100vh-7rem)]">
             <Image
               src="/images/Hero Image.png"
-              alt="Mariel - Web Developer"
+              alt="Mariel - Software Engineer"
               fill
               className="object-contain object-bottom"
               priority

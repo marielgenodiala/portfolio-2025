@@ -18,8 +18,8 @@ export default {
         "paynes-gray": "#597276",
       },
       fontFamily: {
-        heading: ["Inter", "sans-serif"],
-        button: ["Montserrat", "sans-serif"],
+        heading: ["var(--font-poppins)", ...defaultTheme.fontFamily.sans],
+        button: ["var(--font-poppins)", ...defaultTheme.fontFamily.sans],
         text: ["var(--font-poppins)", ...defaultTheme.fontFamily.sans],
         poppins: ["var(--font-poppins)", ...defaultTheme.fontFamily.sans],
         body: ["var(--font-poppins)", ...defaultTheme.fontFamily.sans],

@@ -9,15 +9,21 @@ import { createPortal } from "react-dom";
 import { IoLogoFacebook } from "react-icons/io5";
 import { AiFillInstagram } from "react-icons/ai";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
-import { MdFullscreen } from "react-icons/md";
+import { MdFullscreen, MdLaptopMac } from "react-icons/md";
 
+
+interface WorkRole {
+  title: string;
+  type?: string;
+  period: string;
+  description?: string[];
+}
 
 interface WorkExperience {
-  title: string;
   company: string;
-  period: string;
-  description: string[];
+  duration?: string;
   logo?: string;
+  roles: WorkRole[];
 }
 
 interface PersonalActivity {
@@ -107,30 +113,77 @@ export default function AboutSection() {
 
   const workExperience: WorkExperience[] = [
     {
-      title: "Freelance",
-      company: "Various Clients",
-      period: "Jan 2025 - Present",
-      description: [
-        "Develop web applications using React and Java tailored to client requirements.",
-        // "Provide online tutoring and programming training sessions",
-        "Provide IT consulting services across diverse technology projects.",
-        "Build and maintain WordPress websites and custom web solutions.",
-        "Support clients with data entry and digital content management tasks."
+      company: "Nuvinno PH",
+      duration: calculateDuration("Apr", 2026),
+      logo: "/nuvinno-site-icon-150x150.png",
+      roles: [
+        {
+          title: "CTO — PH Team",
+          period: `Sep 2026 - Present${calculateDuration("Sep", 2026) ? ` · ${calculateDuration("Sep", 2026)}` : ""}`,
+          description: [
+            "Lead projects and supervise developers as a core team member of the Nuvinno team.",
+            "Work on NestJS and .NET projects, and write the technical documentation.",
+            "Handle client-facing responsibilities."
+          ]
+        },
+        {
+          title: "Full Stack Engineer",
+          type: "Full-time",
+          period: `Apr 2026 - Present · ${calculateDuration("Apr", 2026)}`,
+          description: [
+            "Maintain web applications built with .NET and C#.",
+            "Work with Azure cloud services."
+          ]
+        }
       ]
     },
     {
-      title: "Web Developer",
       company: "WebriQ",
-      period: `Jun 2023 - Present · ${calculateDuration("Jun", 2023)}`,
-      description: [
-        "Developed AI Agents and led full-stack web projects using JavaScript, TypeScript, and React.",
-        "Built and maintained B2B applications, eCommerce, and booking platforms with modern frameworks.",
-        "Integrated APIs and third-party services such as Swell and Medusa to extend functionality.",
-        "Utilized PostgreSQL for efficient data handling and backend development.",
-        "Applied UI/UX and SEO best practices to enhance usability, visibility, and performance.",
-        "Prepared documentation to streamline development and collaboration."
-      ],
-      logo: "/images/project-section/website.png" // Using website image as placeholder for WebriQ logo
+      duration: "3 yrs 3 mos",
+      logo: "/webriq-logo.webp",
+      roles: [
+        {
+          title: "Technical Lead / Full Stack Developer",
+          period: "Dec 2023 - Aug 2026 · 2 yrs 9 mos",
+          description: [
+            "Led the development of web applications from planning through deployment.",
+            "Designed and built full-stack solutions using React, NestJS, TypeScript, and PostgreSQL.",
+            "Developed B2B applications, eCommerce platforms, booking systems, and client-specific solutions.",
+            "Architected backend APIs and integrated third-party services, including Ecwid and Medusa.",
+            "Led project delivery by coordinating requirements, implementation, testing, and deployment.",
+            "Mentored developers through code reviews, technical guidance, and knowledge sharing.",
+            "Created technical documentation to improve team collaboration and maintainability.",
+            "Integrated AI-powered features and leveraged AI tools to enhance development workflows and application capabilities."
+          ]
+        },
+        {
+          title: "Frontend Developer",
+          period: "Jun 2023 - Dec 2023 · 7 mos",
+          description: [
+            "Developed responsive websites using React, Next.js, TypeScript, and JavaScript.",
+            "Translated Figma designs into pixel-perfect, responsive user interfaces.",
+            "Integrated REST APIs to deliver dynamic frontend functionality.",
+            "Optimized websites for SEO, accessibility, and performance.",
+            "Collaborated with designers and backend developers to deliver client solutions.",
+            "Maintained and enhanced existing websites through bug fixes and feature improvements."
+          ]
+        }
+      ]
+    },
+    {
+      company: "Various Clients",
+      roles: [
+        {
+          title: "Freelance",
+          period: "Jan 2025 - Present",
+          description: [
+            "Develop web applications using React and Java tailored to client requirements.",
+            "Provide IT consulting services across diverse technology projects.",
+            "Build and maintain WordPress websites and custom web solutions.",
+            "Support clients with data entry and digital content management tasks."
+          ]
+        }
+      ]
     }
   ];
 
@@ -394,7 +447,7 @@ export default function AboutSection() {
         
         const target = e.target as HTMLElement;
         // Check if we're inside the modal overlay (not fullscreen)
-        const modalOverlay = target.closest('[class*="fixed inset-0"]') as HTMLElement;
+        const modalOverlay = target.closest('.modal-overlay') as HTMLElement;
         const fullscreenContent = target.closest('[class*="fullscreen"]') as HTMLElement;
         
         // If we're in the modal overlay (and not in fullscreen), find and scroll the modal content
@@ -411,9 +464,9 @@ export default function AboutSection() {
             // If content is scrollable and not at boundary, manually scroll it
             if (isScrollable) {
               if (e.deltaY > 0 && !isAtBottom) {
-                modalContent.scrollTop += e.deltaY;
+                modalContent.scrollBy({ top: e.deltaY, behavior: 'instant' });
               } else if (e.deltaY < 0 && !isAtTop) {
-                modalContent.scrollTop += e.deltaY;
+                modalContent.scrollBy({ top: e.deltaY, behavior: 'instant' });
               }
             }
           }
@@ -487,7 +540,7 @@ export default function AboutSection() {
             
             const target = e.target as HTMLElement;
             // Check if we're inside the modal overlay
-            const modalOverlay = target.closest('[class*="fixed inset-0"]') as HTMLElement;
+            const modalOverlay = target.closest('.modal-overlay') as HTMLElement;
             
             // If we're in the modal overlay, find and scroll the modal content
             if (modalOverlay) {
@@ -504,10 +557,10 @@ export default function AboutSection() {
                 if (isScrollable) {
                   if (e.deltaY > 0 && !isAtBottom) {
                     // Scroll down
-                    modalContent.scrollTop += e.deltaY;
+                    modalContent.scrollBy({ top: e.deltaY, behavior: 'instant' });
                   } else if (e.deltaY < 0 && !isAtTop) {
                     // Scroll up
-                    modalContent.scrollTop += e.deltaY;
+                    modalContent.scrollBy({ top: e.deltaY, behavior: 'instant' });
                   }
                   // If at boundary, do nothing (already prevented default)
                 }
@@ -622,13 +675,14 @@ export default function AboutSection() {
 
               <div className="max-w-sm min-[650px]:max-w-lg md:max-w-xl lg:max-w-xl">
                 <p className="text-sm md:text-md xl:text-lg text-white mb-4 md:mb-6 font-text text-center lg:text-left">
-                  I&apos;m a full-stack web developer crafting
-                  websites and web apps using Next.js, React, JavaScript, Java,
-                  WordPress, and modern design tools. I handle both design and
-                  development — turning ideas into polished digital experiences.
+                  I&apos;m a software engineer and technical lead building scalable web
+                  applications with Next.js, React, TypeScript, NestJS, and .NET/C#. I
+                  lead projects, guide development teams, and work directly with clients
+                  — turning ideas into reliable, polished digital products from
+                  architecture to deployment.
                 </p>
                 <p className="text-sm md:text-md xl:text-lg text-white mb-6 md:mb-8 font-text text-center lg:text-left">
-                  I&apos;m also part of the public organization JavascriptCebu and actively
+                  I&apos;m also an active member of the JavaScript Cebu community and
                   volunteer at tech events. When I&apos;m not coding, you&apos;ll find me exploring
                   new adventures, playing badminton, or capturing moments through photography.
                 </p>
@@ -725,7 +779,7 @@ export default function AboutSection() {
 
               {/* Work Experience Timeline */}
               <div className="mb-12">
-                <h3 className="text-2xl font-bold text-white mb-6">Work Experience</h3>
+                <h3 className="sticky top-0 z-20 bg-gray-900 py-3 -mt-3 text-2xl font-bold text-white mb-6">Work Experience</h3>
                 <div className="relative">
                   {/* Timeline items */}
                   <div className="space-y-10 relative">
@@ -740,17 +794,46 @@ export default function AboutSection() {
                         
                           {/* Content */}
                           <div className="ml-16 text-white">
-                            <h3 className="text-xl font-bold mb-2">{work.title}</h3>
-                            <p className="text-gray-300 mb-2 font-medium">{work.company}</p>
-                            <p className="text-gray-400 mb-3 text-sm">{work.period}</p>
-                            <ul className="text-gray-300 text-sm leading-relaxed space-y-1">
-                              {work.description.map((item, idx) => (
-                                <li key={idx} className="flex items-start">
-                                  <span className="text-dim-gray mr-2">•</span>
-                                  {item}
-                                </li>
+                            <div className="flex items-center gap-3 mb-4">
+                              <div className="w-12 h-12 rounded-lg bg-white flex items-center justify-center overflow-hidden flex-shrink-0">
+                                {work.logo ? (
+                                  <Image
+                                    src={work.logo}
+                                    alt={`${work.company} logo`}
+                                    width={48}
+                                    height={48}
+                                    className="w-full h-full object-contain p-1"
+                                  />
+                                ) : (
+                                  <MdLaptopMac size={26} className="text-gray-700" aria-hidden="true" />
+                                )}
+                              </div>
+                              <div>
+                                <h3 className="text-xl font-bold leading-tight">{work.company}</h3>
+                                {work.duration && <p className="text-gray-400 text-sm">{work.duration}</p>}
+                              </div>
+                            </div>
+                            {/* Nested timeline for positions within the company */}
+                            <div className="relative border-l border-gray-600 pl-6 space-y-6">
+                              {work.roles.map((role, roleIndex) => (
+                                <div key={roleIndex} className="relative">
+                                  <div className="absolute -left-[1.85rem] top-1.5 w-2.5 h-2.5 bg-gray-400 rounded-full"></div>
+                                  <p className="text-gray-200 font-semibold">{role.title}</p>
+                                  {role.type && <p className="text-gray-400 text-sm">{role.type}</p>}
+                                  <p className="text-gray-400 mb-3 text-sm">{role.period}</p>
+                                  {role.description && (
+                                    <ul className="text-gray-300 text-sm leading-relaxed space-y-1">
+                                      {role.description.map((item, idx) => (
+                                        <li key={idx} className="flex items-start">
+                                          <span className="text-dim-gray mr-2">•</span>
+                                          {item}
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  )}
+                                </div>
                               ))}
-                            </ul>
+                            </div>
                           </div>
                         </div>
                       </Reveal>
@@ -761,7 +844,7 @@ export default function AboutSection() {
 
               {/* Personal Activities */}
               <div className="mb-8">
-                <h3 className="text-2xl font-bold text-white mb-6">Beyond Work</h3>
+                <h3 className="sticky top-0 z-20 bg-gray-900 py-3 -mt-3 text-2xl font-bold text-white mb-6">Beyond Work</h3>
                 <div className="space-y-8">
                   {personalActivities.map((activity, index) => {
                     const activityKey = activity.title.toLowerCase().replace(/\s+/g, '-');

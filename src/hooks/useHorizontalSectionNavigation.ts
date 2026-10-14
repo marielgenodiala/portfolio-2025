@@ -15,6 +15,9 @@ export function useHorizontalSectionNavigation() {
   const verticalScrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const wheelDeltaRef = useRef(0);
   const isNavigatingRef = useRef(false);
+  const navLockUntilRef = useRef(0);
+  const lastWheelTimeRef = useRef(0);
+  const gestureCanNavigateRef = useRef(false);
 
   useEffect(() => {
     const container = document.querySelector('.snap-container') as HTMLElement;
@@ -51,78 +54,86 @@ export function useHorizontalSectionNavigation() {
 
       currentSectionIndexRef.current = targetIndex;
 
+      // Always open a section at its top so the title is visible
+      const targetWrapper = sectionWrappers[targetIndex];
+      if (targetWrapper) {
+        targetWrapper.scrollTo({ top: 0, behavior: 'instant' });
+      }
+
       // Reset navigation flag after scroll completes
       setTimeout(() => {
         isNavigatingRef.current = false;
       }, 600);
     };
 
+    // Overflow that only eats into the section's bottom padding hides no content,
+    // so the section counts as fitting the viewport (with a small visual margin kept)
+    const BOTTOM_PADDING_MARGIN_PX = 16;
+    // Wheel events closer together than this belong to the same gesture (includes trackpad inertia)
+    const GESTURE_GAP_MS = 120;
+    // Ignore all wheel input after a section change so inertia can't scroll the new section
+    const NAV_LOCK_MS = 800;
+    const NAV_DELTA_THRESHOLD = 40;
+
     // Check if vertical scroll is at boundary (top or bottom)
-    const isVerticalScrollAtBoundary = (sectionWrapper: HTMLElement): { atTop: boolean; atBottom: boolean } => {
-      const scrollTop = sectionWrapper.scrollTop;
-      const scrollHeight = sectionWrapper.scrollHeight;
-      const clientHeight = sectionWrapper.clientHeight;
-      const threshold = 10; // 10px threshold
+    const getScrollState = (sectionWrapper: HTMLElement): { scrollable: boolean; atTop: boolean; atBottom: boolean } => {
+      const { scrollTop, scrollHeight, clientHeight } = sectionWrapper;
+      const threshold = 10;
+      const section = sectionWrapper.firstElementChild as HTMLElement | null;
+      const paddingBottom = section ? parseFloat(getComputedStyle(section).paddingBottom) || 0 : 0;
+      const hiddenTolerance = Math.max(4, paddingBottom - BOTTOM_PADDING_MARGIN_PX);
+      const scrollable = scrollHeight - clientHeight > hiddenTolerance;
 
-      const atTop = scrollTop <= threshold;
-      const atBottom = scrollTop + clientHeight >= scrollHeight - threshold;
-
-      return { atTop, atBottom };
+      return {
+        scrollable,
+        atTop: !scrollable || scrollTop <= threshold,
+        atBottom: !scrollable || scrollTop + clientHeight >= scrollHeight - threshold,
+      };
     };
 
     // Handle wheel events for horizontal/vertical navigation
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
 
+      const now = performance.now();
+      const isNewGesture = now - lastWheelTimeRef.current > GESTURE_GAP_MS;
+      const gap = now - lastWheelTimeRef.current;
+      lastWheelTimeRef.current = now;
+
+      // Swallow everything (including inertia) right after a section change
+      if (now < navLockUntilRef.current) return;
+
       const currentSectionWrapper = sectionWrappers[currentSectionIndexRef.current];
-      if (!currentSectionWrapper) return;
+      if (!currentSectionWrapper || e.deltaY === 0) return;
 
-      // Check vertical scroll boundaries
-      const { atTop, atBottom } = isVerticalScrollAtBoundary(currentSectionWrapper);
       const isScrollingDown = e.deltaY > 0;
-      const isScrollingUp = e.deltaY < 0;
+      const { scrollable, atTop, atBottom } = getScrollState(currentSectionWrapper);
+      const atBoundary = isScrollingDown ? atBottom : atTop;
 
-      // Accumulate wheel delta for smoother navigation
-      wheelDeltaRef.current += Math.abs(e.deltaY);
+      // A gesture may only change section if it STARTED at the boundary.
+      // Scrolling down to the bottom and carrying on never flips the page.
+      if (isNewGesture) {
+        gestureCanNavigateRef.current = atBoundary;
+        if (gap > 700) wheelDeltaRef.current = 0;
+      }
 
-      // If we're scrolling vertically and not at boundaries, handle vertical scroll
-      if ((isScrollingDown && !atBottom) || (isScrollingUp && !atTop)) {
-        isScrollingVerticallyRef.current = true;
+      if (scrollable && !atBoundary) {
         wheelDeltaRef.current = 0;
-
-        // Clear any pending horizontal navigation
-        if (verticalScrollTimeoutRef.current) {
-          clearTimeout(verticalScrollTimeoutRef.current);
-        }
-
-        // Allow vertical scrolling
-        currentSectionWrapper.scrollBy({
-          top: e.deltaY,
-          behavior: 'auto'
-        });
-
-        // Reset vertical scrolling flag after a delay
-        verticalScrollTimeoutRef.current = setTimeout(() => {
-          isScrollingVerticallyRef.current = false;
-        }, 150);
-
+        currentSectionWrapper.scrollBy({ top: e.deltaY, behavior: 'auto' });
         return;
       }
 
-      // If at vertical boundary, handle horizontal navigation
-      if ((atBottom && isScrollingDown) || (atTop && isScrollingUp)) {
-        // Only navigate horizontally if we've accumulated enough scroll delta
-        if (wheelDeltaRef.current > 50) {
-          wheelDeltaRef.current = 0;
+      if (!gestureCanNavigateRef.current) return;
 
-          if (isScrollingDown && currentSectionIndexRef.current < sections.length - 1) {
-            // Navigate to next section (swipe right)
-            navigateToSection(currentSectionIndexRef.current + 1, 'right');
-          } else if (isScrollingUp && currentSectionIndexRef.current > 0) {
-            // Navigate to previous section (swipe left)
-            navigateToSection(currentSectionIndexRef.current - 1, 'left');
-          }
-        }
+      wheelDeltaRef.current += Math.abs(e.deltaY);
+      if (wheelDeltaRef.current < NAV_DELTA_THRESHOLD) return;
+
+      wheelDeltaRef.current = 0;
+      gestureCanNavigateRef.current = false;
+      const nextIndex = currentSectionIndexRef.current + (isScrollingDown ? 1 : -1);
+      if (nextIndex >= 0 && nextIndex < sections.length) {
+        navLockUntilRef.current = now + NAV_LOCK_MS;
+        navigateToSection(nextIndex, isScrollingDown ? 'right' : 'left');
       }
     };
 
@@ -131,6 +142,9 @@ export function useHorizontalSectionNavigation() {
       const newIndex = getCurrentSectionIndex();
       if (newIndex !== currentSectionIndexRef.current) {
         currentSectionIndexRef.current = newIndex;
+
+        // Always arrive at the top of a section so its title is visible
+        sectionWrappers[newIndex]?.scrollTo({ top: 0, behavior: 'instant' });
 
         // Update URL based on current section
         const currentSection = sections[newIndex];
